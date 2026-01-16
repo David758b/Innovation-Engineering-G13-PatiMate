@@ -32,7 +32,7 @@
 				.arcColor('color')
 				.arcDashLength(0.4)
 				.arcDashGap(0.2)
-				.arcDashAnimateTime(2000)
+				.arcDashAnimateTime(4000)
 				.arcStroke(0.5)
 				// Points layer for patent offices
 				.pointsData(pointsData)
