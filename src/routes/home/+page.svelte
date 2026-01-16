@@ -12,7 +12,28 @@
 	<!-- Header -->
 	<header class="flex items-center justify-between border-b border-white/10 px-4 py-4 lg:px-8">
 		<a href="/" class="flex items-center gap-2">
-			<img src="/patimate-logo.png" alt="PatiMate" class="h-8 w-auto lg:h-10" />
+			<!-- Globe icon -->
+			<svg
+				class="h-8 w-8 lg:h-10 lg:w-10"
+				viewBox="0 0 64 64"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<circle cx="32" cy="32" r="28" stroke="url(#globe-gradient-home)" stroke-width="3" />
+				<ellipse cx="32" cy="32" rx="28" ry="10" stroke="url(#globe-gradient-home)" stroke-width="2" />
+				<ellipse cx="32" cy="32" rx="10" ry="28" stroke="url(#globe-gradient-home)" stroke-width="2" />
+				<circle cx="32" cy="32" r="4" fill="#22c55e" />
+				<defs>
+					<linearGradient id="globe-gradient-home" x1="0" y1="0" x2="64" y2="64">
+						<stop offset="0%" stop-color="#22c55e" />
+						<stop offset="100%" stop-color="#16a34a" />
+					</linearGradient>
+				</defs>
+			</svg>
+			<!-- Text -->
+			<span class="text-xl font-bold tracking-tight text-white lg:text-2xl">
+				Pati<span class="text-green-500">Mate</span>
+			</span>
 		</a>
 		<SettingsModal />
 	</header>
