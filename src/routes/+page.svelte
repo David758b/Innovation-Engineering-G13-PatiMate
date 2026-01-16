@@ -9,7 +9,7 @@
 		class="flex w-[35%] flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
 	>
 		<!-- Header -->
-		<header class="flex items-center gap-3 px-8 py-6">
+		<header class="flex items-center justify-center px-8 py-6">
 			<img src="/patimate-logo.png" alt="PatiMate Logo" class="h-10 w-auto" />
 		</header>
 
