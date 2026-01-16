@@ -1,6 +1,6 @@
 # PatiMate
 
-The number uno patent filling cost estimation tool on the marked! It will solve cancer...I guess. If not, blame our innovation facilitator Gabe
+The number uno patent filling cost estimation tool on the market! It will solve cancer...I guess. If not, blame our innovation facilitator Gabe
 
 ---
 
