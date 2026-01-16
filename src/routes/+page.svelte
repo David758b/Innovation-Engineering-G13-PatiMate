@@ -16,12 +16,16 @@
 		<!-- Main content - vertically centered -->
 		<main class="flex flex-1 flex-col justify-center px-6 pb-8 lg:px-8 lg:pb-12">
 			<!-- Tagline -->
-			<h1 class="text-center text-2xl font-bold leading-tight tracking-tight text-white sm:text-3xl lg:text-left lg:text-4xl xl:text-5xl">
+			<h1
+				class="text-center text-2xl leading-tight font-bold tracking-tight text-white sm:text-3xl lg:text-left lg:text-4xl xl:text-5xl"
+			>
 				Estimate patent filing costs worldwide
 			</h1>
 
 			<!-- Value proposition -->
-			<p class="mt-3 text-center text-base text-slate-400 sm:text-lg lg:mt-4 lg:text-left lg:text-xl">
+			<p
+				class="mt-3 text-center text-base text-slate-400 sm:text-lg lg:mt-4 lg:text-left lg:text-xl"
+			>
 				Calculate costs across 190+ countries in seconds
 			</p>
 
@@ -52,7 +56,9 @@
 	</div>
 
 	<!-- Right Panel - Globe (100% mobile, 65% desktop) -->
-	<div class="relative min-h-[50vh] w-full bg-gradient-to-bl from-slate-900 via-slate-950 to-slate-950 lg:min-h-screen lg:w-[65%]">
+	<div
+		class="relative min-h-[50vh] w-full bg-gradient-to-bl from-slate-900 via-slate-950 to-slate-950 lg:min-h-screen lg:w-[65%]"
+	>
 		<!-- Subtle star-like dots -->
 		<div
 			class="absolute inset-0 opacity-20"

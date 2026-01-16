@@ -9,6 +9,7 @@
 ## User Requirements
 
 ### Inputs (Detailed)
+
 - **Target countries:** Preset bundles (Big 5, PCT Major, Europe, Asia-Pacific) + custom selection with regional groupings
 - **Patent type:** Utility, Design, or Provisional
 - **Number of claims:** Numeric input (default: 20)
@@ -19,11 +20,13 @@
 - **Translation needed:** Toggle (auto-detected based on countries, user can override)
 
 ### Outputs
+
 - **Summary total:** Large prominent figure with quick category breakdown
 - **Itemized breakdown:** Per-country table showing official fees, attorney fees, translation costs, maintenance fees (5-year)
 - **Expandable rows:** Click country row to see detailed sub-breakdown (filing, examination, grant fees, etc.)
 
 ### Data Approach
+
 - **Hybrid with defaults:** Pre-populated reasonable defaults for all costs
 - **Fully configurable:** Users can override any value via settings modal
 - **Persistence:** Settings saved to localStorage (no account required)
@@ -70,21 +73,25 @@
 ## Input Panel Design
 
 ### Header
+
 - Logo (same as landing page)
 - Settings gear icon → opens configuration modal
 
 ### Section A: Country Selection (expanded by default)
+
 - Preset bundle chips: "Big 5", "PCT Major", "Europe", "Asia-Pacific", "Custom"
 - Searchable multi-select dropdown grouped by region
 - Selected countries as removable tags
 
 ### Section B: Patent Details
+
 - Patent type: Radio buttons (Utility / Design / Provisional)
 - Number of claims: Number input
 - Number of pages: Number input
 - Technology field: Dropdown
 
 ### Section C: Filing Strategy
+
 - Route: Radio buttons (Direct National / PCT International)
 - Priority date: Date picker
 - Translation needed: Toggle
@@ -94,21 +101,24 @@
 ## Results Panel Design
 
 ### Summary Header (sticky)
+
 - Large green total figure
 - Category breakdown: Official Fees | Attorney | Translation | Maintenance
 - Country count
 
 ### Country Breakdown Table
-| Country | Official | Attorney | Translation | Maint.(5y) | Total |
-|---------|----------|----------|-------------|------------|-------|
-| 🇺🇸 USA | $2,500 | $8,000 | – | $4,500 | $15,000 |
-| 🇪🇺 EPO | $6,200 | $12,000 | $3,500 | $8,200 | $29,900 |
+
+| Country | Official | Attorney | Translation | Maint.(5y) | Total   |
+| ------- | -------- | -------- | ----------- | ---------- | ------- |
+| 🇺🇸 USA  | $2,500   | $8,000   | –           | $4,500     | $15,000 |
+| 🇪🇺 EPO  | $6,200   | $12,000  | $3,500      | $8,200     | $29,900 |
 
 - Sortable columns
 - Hover highlights row
 - Click to expand detailed sub-breakdown
 
 ### Empty State
+
 - "Select countries to see cost estimates"
 - Subtle placeholder visual
 
@@ -117,20 +127,24 @@
 ## Settings Modal Design
 
 ### Structure
+
 - Tabbed interface: [Official Fees] [Attorney Rates] [Translation]
 - Per-country configuration with default value reference
 - "Reset to defaults" button
 - Save/Cancel actions
 
 ### Official Fees Tab
+
 - Country dropdown selector
 - Fee fields: Filing, Search, Examination, Grant/Issue
 
 ### Attorney Rates Tab
+
 - Per-country fee overrides
 - Or global hourly rate + estimated hours
 
 ### Translation Tab
+
 - Cost per word/page by language
 
 ---
@@ -159,42 +173,45 @@
 ## Data Structures
 
 ### Country Cost Data
+
 ```typescript
 interface CountryCosts {
-  countryCode: string;
-  name: string;
-  officialFees: {
-    filing: number;
-    search: number;
-    examination: number;
-    grant: number;
-  };
-  attorneyFees: number;
-  translationCostPerPage: number;
-  maintenanceFeesYear1to5: number;
+	countryCode: string;
+	name: string;
+	officialFees: {
+		filing: number;
+		search: number;
+		examination: number;
+		grant: number;
+	};
+	attorneyFees: number;
+	translationCostPerPage: number;
+	maintenanceFeesYear1to5: number;
 }
 ```
 
 ### User Configuration
+
 ```typescript
 interface UserConfig {
-  officialFeeOverrides: Record<string, Partial<OfficialFees>>;
-  attorneyRateOverrides: Record<string, number>;
-  translationRateOverrides: Record<string, number>;
+	officialFeeOverrides: Record<string, Partial<OfficialFees>>;
+	attorneyRateOverrides: Record<string, number>;
+	translationRateOverrides: Record<string, number>;
 }
 ```
 
 ### Calculation Input
+
 ```typescript
 interface CalculationInput {
-  countries: string[];
-  patentType: 'utility' | 'design' | 'provisional';
-  claims: number;
-  pages: number;
-  filingStrategy: 'direct' | 'pct';
-  priorityDate: Date | null;
-  technologyField: string;
-  translationNeeded: boolean;
+	countries: string[];
+	patentType: 'utility' | 'design' | 'provisional';
+	claims: number;
+	pages: number;
+	filingStrategy: 'direct' | 'pct';
+	priorityDate: Date | null;
+	technologyField: string;
+	translationNeeded: boolean;
 }
 ```
 

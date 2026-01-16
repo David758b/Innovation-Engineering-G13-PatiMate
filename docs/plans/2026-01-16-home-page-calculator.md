@@ -13,11 +13,13 @@
 ## Task 1: Install Required shadcn-svelte Components
 
 **Files:**
+
 - Modify: `src/lib/components/ui/` (new component directories)
 
 **Step 1: Install input component**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && npx shadcn-svelte@latest add input
 ```
@@ -27,6 +29,7 @@ Expected: Creates `src/lib/components/ui/input/`
 **Step 2: Install select component**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && npx shadcn-svelte@latest add select
 ```
@@ -36,6 +39,7 @@ Expected: Creates `src/lib/components/ui/select/`
 **Step 3: Install radio-group component**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && npx shadcn-svelte@latest add radio-group
 ```
@@ -45,6 +49,7 @@ Expected: Creates `src/lib/components/ui/radio-group/`
 **Step 4: Install checkbox component**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && npx shadcn-svelte@latest add checkbox
 ```
@@ -54,6 +59,7 @@ Expected: Creates `src/lib/components/ui/checkbox/`
 **Step 5: Install dialog component**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && npx shadcn-svelte@latest add dialog
 ```
@@ -63,6 +69,7 @@ Expected: Creates `src/lib/components/ui/dialog/`
 **Step 6: Install tabs component**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && npx shadcn-svelte@latest add tabs
 ```
@@ -72,6 +79,7 @@ Expected: Creates `src/lib/components/ui/tabs/`
 **Step 7: Install card component**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && npx shadcn-svelte@latest add card
 ```
@@ -81,6 +89,7 @@ Expected: Creates `src/lib/components/ui/card/`
 **Step 8: Install table component**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && npx shadcn-svelte@latest add table
 ```
@@ -90,6 +99,7 @@ Expected: Creates `src/lib/components/ui/table/`
 **Step 9: Install badge component**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && npx shadcn-svelte@latest add badge
 ```
@@ -99,6 +109,7 @@ Expected: Creates `src/lib/components/ui/badge/`
 **Step 10: Install label component**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && npx shadcn-svelte@latest add label
 ```
@@ -108,6 +119,7 @@ Expected: Creates `src/lib/components/ui/label/`
 **Step 11: Install collapsible component**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && npx shadcn-svelte@latest add collapsible
 ```
@@ -117,6 +129,7 @@ Expected: Creates `src/lib/components/ui/collapsible/`
 **Step 12: Install switch component**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && npx shadcn-svelte@latest add switch
 ```
@@ -126,6 +139,7 @@ Expected: Creates `src/lib/components/ui/switch/`
 **Step 13: Verify TypeScript compiles**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && pnpm check
 ```
@@ -143,6 +157,7 @@ cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && git add -A && git
 ## Task 2: Create Data Types and Default Cost Data
 
 **Files:**
+
 - Create: `src/lib/data/types.ts`
 - Create: `src/lib/data/default-costs.ts`
 - Create: `src/lib/data/countries.ts`
@@ -840,6 +855,7 @@ export function getDefaultCosts(countryCode: string): CountryCosts | undefined {
 **Step 4: Verify TypeScript compiles**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && pnpm check
 ```
@@ -857,6 +873,7 @@ cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && git add -A && git
 ## Task 3: Create Calculation Logic and State Store
 
 **Files:**
+
 - Create: `src/lib/stores/calculator.svelte.ts`
 
 **Step 1: Create the calculator store with calculation logic**
@@ -1101,6 +1118,7 @@ export const calculatorStore = createCalculatorStore();
 **Step 2: Verify TypeScript compiles**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && pnpm check
 ```
@@ -1118,6 +1136,7 @@ cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && git add -A && git
 ## Task 4: Build CountrySelector Component
 
 **Files:**
+
 - Create: `src/lib/components/calculator/CountrySelector.svelte`
 
 **Step 1: Create the CountrySelector component**
@@ -1266,7 +1285,7 @@ Create `src/lib/components/calculator/CountrySelector.svelte`:
 				)}
 				{#if regionCountries.length > 0}
 					<div>
-						<h4 class="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+						<h4 class="mb-2 text-xs font-semibold tracking-wider text-slate-500 uppercase">
 							{region}
 						</h4>
 						<div class="space-y-1">
@@ -1295,6 +1314,7 @@ Create `src/lib/components/calculator/CountrySelector.svelte`:
 **Step 2: Verify TypeScript compiles**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && pnpm check
 ```
@@ -1312,6 +1332,7 @@ cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && git add -A && git
 ## Task 5: Build PatentDetailsForm Component
 
 **Files:**
+
 - Create: `src/lib/components/calculator/PatentDetailsForm.svelte`
 
 **Step 1: Create the PatentDetailsForm component**
@@ -1462,6 +1483,7 @@ Create `src/lib/components/calculator/PatentDetailsForm.svelte`:
 **Step 2: Verify TypeScript compiles**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && pnpm check
 ```
@@ -1479,6 +1501,7 @@ cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && git add -A && git
 ## Task 6: Build FilingStrategyForm Component
 
 **Files:**
+
 - Create: `src/lib/components/calculator/FilingStrategyForm.svelte`
 
 **Step 1: Create the FilingStrategyForm component**
@@ -1604,6 +1627,7 @@ Create `src/lib/components/calculator/FilingStrategyForm.svelte`:
 **Step 2: Verify TypeScript compiles**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && pnpm check
 ```
@@ -1621,6 +1645,7 @@ cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && git add -A && git
 ## Task 7: Build CostSummaryCard Component
 
 **Files:**
+
 - Create: `src/lib/components/calculator/CostSummaryCard.svelte`
 
 **Step 1: Create the CostSummaryCard component**
@@ -1655,7 +1680,7 @@ Create `src/lib/components/calculator/CostSummaryCard.svelte`:
 		{:else}
 			<!-- Total Cost -->
 			<div class="mb-6 text-center">
-				<p class="text-sm font-medium uppercase tracking-wider text-slate-400">
+				<p class="text-sm font-medium tracking-wider text-slate-400 uppercase">
 					Total Estimated Cost
 				</p>
 				<p class="mt-2 text-4xl font-bold text-green-400 lg:text-5xl">
@@ -1670,25 +1695,25 @@ Create `src/lib/components/calculator/CostSummaryCard.svelte`:
 			<!-- Cost Breakdown -->
 			<div class="grid grid-cols-2 gap-3 border-t border-white/10 pt-4 lg:grid-cols-4">
 				<div class="text-center">
-					<p class="text-xs font-medium uppercase tracking-wider text-slate-500">Official Fees</p>
+					<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">Official Fees</p>
 					<p class="mt-1 text-lg font-semibold text-slate-200">
 						{formatCurrency(result.totalOfficialFees)}
 					</p>
 				</div>
 				<div class="text-center">
-					<p class="text-xs font-medium uppercase tracking-wider text-slate-500">Attorney</p>
+					<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">Attorney</p>
 					<p class="mt-1 text-lg font-semibold text-slate-200">
 						{formatCurrency(result.totalAttorneyFees)}
 					</p>
 				</div>
 				<div class="text-center">
-					<p class="text-xs font-medium uppercase tracking-wider text-slate-500">Translation</p>
+					<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">Translation</p>
 					<p class="mt-1 text-lg font-semibold text-slate-200">
 						{formatCurrency(result.totalTranslationCosts)}
 					</p>
 				</div>
 				<div class="text-center">
-					<p class="text-xs font-medium uppercase tracking-wider text-slate-500">Maintenance</p>
+					<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">Maintenance</p>
 					<p class="mt-1 text-lg font-semibold text-slate-200">
 						{formatCurrency(result.totalMaintenanceFees)}
 					</p>
@@ -1702,6 +1727,7 @@ Create `src/lib/components/calculator/CostSummaryCard.svelte`:
 **Step 2: Verify TypeScript compiles**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && pnpm check
 ```
@@ -1719,6 +1745,7 @@ cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && git add -A && git
 ## Task 8: Build CostBreakdownTable Component
 
 **Files:**
+
 - Create: `src/lib/components/calculator/CostBreakdownTable.svelte`
 
 **Step 1: Create the CostBreakdownTable component**
@@ -1733,7 +1760,13 @@ Create `src/lib/components/calculator/CostBreakdownTable.svelte`:
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
 	import { ChevronDown, ChevronRight } from '@lucide/svelte';
 
-	type SortField = 'name' | 'officialFees' | 'attorneyFees' | 'translationCosts' | 'maintenanceFees' | 'total';
+	type SortField =
+		| 'name'
+		| 'officialFees'
+		| 'attorneyFees'
+		| 'translationCosts'
+		| 'maintenanceFees'
+		| 'total';
 	type SortDirection = 'asc' | 'desc';
 
 	let sortField = $state<SortField>('total');
@@ -1908,20 +1941,18 @@ Create `src/lib/components/calculator/CostBreakdownTable.svelte`:
 							<Table.Cell colspan={7} class="px-8 py-4">
 								<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 									<div>
-										<p class="text-xs font-medium uppercase tracking-wider text-slate-500">
+										<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">
 											Official Fees Breakdown
 										</p>
 										<div class="mt-2 space-y-1 text-sm">
 											<div class="flex justify-between">
 												<span class="text-slate-400">Filing:</span>
-												<span class="text-slate-300"
-													>{formatCurrency(result.breakdown.filing)}</span
+												<span class="text-slate-300">{formatCurrency(result.breakdown.filing)}</span
 												>
 											</div>
 											<div class="flex justify-between">
 												<span class="text-slate-400">Search:</span>
-												<span class="text-slate-300"
-													>{formatCurrency(result.breakdown.search)}</span
+												<span class="text-slate-300">{formatCurrency(result.breakdown.search)}</span
 												>
 											</div>
 											<div class="flex justify-between">
@@ -1932,14 +1963,12 @@ Create `src/lib/components/calculator/CostBreakdownTable.svelte`:
 											</div>
 											<div class="flex justify-between">
 												<span class="text-slate-400">Grant:</span>
-												<span class="text-slate-300"
-													>{formatCurrency(result.breakdown.grant)}</span
-												>
+												<span class="text-slate-300">{formatCurrency(result.breakdown.grant)}</span>
 											</div>
 										</div>
 									</div>
 									<div>
-										<p class="text-xs font-medium uppercase tracking-wider text-slate-500">
+										<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">
 											Attorney Fees
 										</p>
 										<p class="mt-2 text-lg font-semibold text-slate-200">
@@ -1947,7 +1976,7 @@ Create `src/lib/components/calculator/CostBreakdownTable.svelte`:
 										</p>
 									</div>
 									<div>
-										<p class="text-xs font-medium uppercase tracking-wider text-slate-500">
+										<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">
 											Translation
 										</p>
 										<p class="mt-2 text-lg font-semibold text-slate-200">
@@ -1957,7 +1986,7 @@ Create `src/lib/components/calculator/CostBreakdownTable.svelte`:
 										</p>
 									</div>
 									<div>
-										<p class="text-xs font-medium uppercase tracking-wider text-slate-500">
+										<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">
 											Maintenance (5 years)
 										</p>
 										<p class="mt-2 text-lg font-semibold text-slate-200">
@@ -1978,6 +2007,7 @@ Create `src/lib/components/calculator/CostBreakdownTable.svelte`:
 **Step 2: Verify TypeScript compiles**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && pnpm check
 ```
@@ -1995,6 +2025,7 @@ cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && git add -A && git
 ## Task 9: Build SettingsModal Component
 
 **Files:**
+
 - Create: `src/lib/components/calculator/SettingsModal.svelte`
 
 **Step 1: Create the SettingsModal component**
@@ -2280,6 +2311,7 @@ Create `src/lib/components/calculator/SettingsModal.svelte`:
 **Step 2: Verify TypeScript compiles**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && pnpm check
 ```
@@ -2297,6 +2329,7 @@ cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && git add -A && git
 ## Task 10: Build the HomePage (Orchestration)
 
 **Files:**
+
 - Modify: `src/routes/home/+page.svelte`
 
 **Step 1: Replace the placeholder with the full calculator page**
@@ -2313,9 +2346,7 @@ Replace contents of `src/routes/home/+page.svelte`:
 	import SettingsModal from '$lib/components/calculator/SettingsModal.svelte';
 </script>
 
-<div
-	class="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100"
->
+<div class="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100">
 	<!-- Header -->
 	<header class="flex items-center justify-between border-b border-white/10 px-4 py-4 lg:px-8">
 		<a href="/" class="flex items-center gap-2">
@@ -2327,11 +2358,11 @@ Replace contents of `src/routes/home/+page.svelte`:
 	<!-- Main Content -->
 	<main class="flex flex-col lg:flex-row">
 		<!-- Input Panel (Left) -->
-		<aside class="w-full space-y-4 border-b border-white/10 p-4 lg:w-[35%] lg:border-b-0 lg:border-r lg:p-6">
+		<aside
+			class="w-full space-y-4 border-b border-white/10 p-4 lg:w-[35%] lg:border-r lg:border-b-0 lg:p-6"
+		>
 			<h1 class="text-xl font-bold text-white lg:text-2xl">Patent Cost Calculator</h1>
-			<p class="text-sm text-slate-400">
-				Estimate patent filing costs across multiple countries
-			</p>
+			<p class="text-sm text-slate-400">Estimate patent filing costs across multiple countries</p>
 
 			<div class="space-y-4 pt-2">
 				<CountrySelector />
@@ -2360,6 +2391,7 @@ Replace contents of `src/routes/home/+page.svelte`:
 **Step 2: Verify TypeScript compiles**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && pnpm check
 ```
@@ -2377,16 +2409,19 @@ cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && git add -A && git
 ## Task 11: Test and Polish
 
 **Files:**
+
 - Possibly adjust any component based on testing
 
 **Step 1: Run dev server**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && pnpm dev
 ```
 
 Open http://localhost:5173/home and verify:
+
 - Dashboard layout displays correctly (35/65 split on desktop)
 - Country presets work (clicking "Big 5" selects 5 countries)
 - Custom country selection works (search, checkboxes)
@@ -2403,6 +2438,7 @@ Open http://localhost:5173/home and verify:
 **Step 2: Run build**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && pnpm build
 ```
@@ -2412,6 +2448,7 @@ Expected: Build succeeds
 **Step 3: Format code**
 
 Run:
+
 ```bash
 cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && pnpm format
 ```
@@ -2426,19 +2463,19 @@ cd /home/david/Innovation-Engineering-G13-PatiMate/patimate && git add -A && git
 
 ## Summary of Changes
 
-| Action | File Path |
-|--------|-----------|
-| Create | `src/lib/data/types.ts` |
-| Create | `src/lib/data/countries.ts` |
-| Create | `src/lib/data/default-costs.ts` |
-| Create | `src/lib/stores/calculator.svelte.ts` |
-| Create | `src/lib/components/calculator/CountrySelector.svelte` |
-| Create | `src/lib/components/calculator/PatentDetailsForm.svelte` |
+| Action | File Path                                                 |
+| ------ | --------------------------------------------------------- |
+| Create | `src/lib/data/types.ts`                                   |
+| Create | `src/lib/data/countries.ts`                               |
+| Create | `src/lib/data/default-costs.ts`                           |
+| Create | `src/lib/stores/calculator.svelte.ts`                     |
+| Create | `src/lib/components/calculator/CountrySelector.svelte`    |
+| Create | `src/lib/components/calculator/PatentDetailsForm.svelte`  |
 | Create | `src/lib/components/calculator/FilingStrategyForm.svelte` |
-| Create | `src/lib/components/calculator/CostSummaryCard.svelte` |
+| Create | `src/lib/components/calculator/CostSummaryCard.svelte`    |
 | Create | `src/lib/components/calculator/CostBreakdownTable.svelte` |
-| Create | `src/lib/components/calculator/SettingsModal.svelte` |
-| Modify | `src/routes/home/+page.svelte` |
+| Create | `src/lib/components/calculator/SettingsModal.svelte`      |
+| Modify | `src/routes/home/+page.svelte`                            |
 
 ## shadcn-svelte Components Installed
 
