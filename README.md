@@ -1,38 +1,61 @@
-# sv
+# PatiMate
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+The number uno patent filling cost estimation tool on the market! It will solve cancer...I guess. If not, blame our innovation facilitator Gabe
 
-## Creating a project
+---
 
-If you're seeing this, you've probably already done this step. Congrats!
 
-```sh
-# create a new project in the current directory
-npx sv create
+## Prerequisites
 
-# create a new project in my-app
-npx sv create my-app
+Before you begin, you need to install the following software on your machine.
+
+### 1. Install Node.js
+
+Node.js is a JavaScript runtime that allows you to run JavaScript on your computer.
+
+**Windows:**
+1. Go to [https://nodejs.org](https://nodejs.org)
+2. Download the **LTS** (Long Term Support) version
+3. Run the installer and follow the prompts
+4. Restart your terminal/command prompt after installation
+
+**macOS:**
+```bash
+# Using Homebrew (recommended)
+brew install node
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+**Verify installation:**
+```bash
+node --version    # Should show v18.x.x or higher
+npm --version     # Should show 9.x.x or higher
 ```
 
-## Building
+### 2. Install pnpm
 
-To create a production version of your app:
+This project uses **pnpm** as the package manager
 
-```sh
-npm run build
+**Install pnpm globally:**
+```bash
+npm install -g pnpm
 ```
 
-You can preview the production build with `npm run preview`.
+**Verify installation:**
+```bash
+pnpm --version    # Should show 9.x.x or higher
+```
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Quick Start
+
+Once you have the prerequisites installed, follow these steps:
+
+```bash
+
+git clone <repository-url>
+cd patimate
+pnpm install
+pnpm run dev
+
+# 4. Open your browser and go to:
+#    http://localhost:5173
+```
