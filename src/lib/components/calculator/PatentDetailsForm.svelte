@@ -2,19 +2,12 @@
 	import * as Collapsible from '$lib/components/ui/collapsible';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import * as RadioGroup from '$lib/components/ui/radio-group';
 	import * as Select from '$lib/components/ui/select';
-	import type { PatentType, TechnologyField } from '$lib/data/types';
+	import type { TechnologyField } from '$lib/data/types';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
 	import { ChevronDown, ChevronUp } from '@lucide/svelte';
 
 	let isExpanded = $state(false);
-
-	const PATENT_TYPES: { value: PatentType; label: string }[] = [
-		{ value: 'utility', label: 'Utility Patent' },
-		{ value: 'design', label: 'Design Patent' },
-		{ value: 'provisional', label: 'Provisional Application' }
-	];
 
 	const TECHNOLOGY_FIELDS: { value: TechnologyField; label: string }[] = [
 		{ value: 'mechanical', label: 'Mechanical' },
@@ -25,10 +18,6 @@
 		{ value: 'pharma', label: 'Pharmaceutical' },
 		{ value: 'other', label: 'Other' }
 	];
-
-	function handlePatentTypeChange(value: string) {
-		calculatorStore.setPatentType(value as PatentType);
-	}
 
 	function handleTechFieldChange(value: string | undefined) {
 		if (value) {
@@ -65,29 +54,6 @@
 	</Collapsible.Trigger>
 
 	<Collapsible.Content class="space-y-4 px-4 pb-4">
-		<!-- Patent Type -->
-		<div class="space-y-2">
-			<Label class="text-sm text-slate-400">Patent Type</Label>
-			<RadioGroup.Root
-				value={calculatorStore.input.patentType}
-				onValueChange={handlePatentTypeChange}
-				class="flex flex-col gap-2"
-			>
-				{#each PATENT_TYPES as type}
-					<div class="flex items-center gap-2">
-						<RadioGroup.Item
-							value={type.value}
-							id={`patent-type-${type.value}`}
-							class="border-white/30 text-green-500 data-[state=checked]:border-green-500 data-[state=checked]:bg-green-500"
-						/>
-						<Label for={`patent-type-${type.value}`} class="cursor-pointer text-sm text-slate-300">
-							{type.label}
-						</Label>
-					</div>
-				{/each}
-			</RadioGroup.Root>
-		</div>
-
 		<!-- Number of Claims -->
 		<div class="space-y-2">
 			<Label for="claims" class="text-sm text-slate-400">Number of Claims</Label>
