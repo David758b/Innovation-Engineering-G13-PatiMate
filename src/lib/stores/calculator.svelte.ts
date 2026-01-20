@@ -36,6 +36,7 @@ const DEFAULT_INPUT: CalculationInput = {
 	patentType: 'utility',
 	claims: 20,
 	pages: 30,
+	wordCount: 7500, // Average patent ~250 words per page
 	filingStrategy: null, // No strategy selected by default
 	priorityDate: null,
 	technologyField: 'mechanical',
@@ -156,10 +157,12 @@ function createCalculatorStore() {
 				// Flat fee (global)
 				const flatFee = globalSettings.flatFee;
 
-				// Translation costs (per page × number of pages)
-				const translationRate = overrides.translation ?? defaults.translationCostPerPage;
+				// Translation costs (based on word count for more accuracy)
+				// Convert per-page rate to per-word rate (~250 words per page assumed)
+				const translationRatePerPage = overrides.translation ?? defaults.translationCostPerPage;
+				const translationRatePerWord = translationRatePerPage / 250;
 				const translationCosts = defaults.requiresTranslation
-					? translationRate * input.pages
+					? Math.round(translationRatePerWord * input.wordCount)
 					: 0;
 
 				// Maintenance fees (annual × period)
@@ -247,6 +250,10 @@ function createCalculatorStore() {
 		},
 		setPages(pages: number) {
 			input.pages = Math.max(1, pages);
+			calculationResult = null;
+		},
+		setWordCount(wordCount: number) {
+			input.wordCount = Math.max(1, wordCount);
 			calculationResult = null;
 		},
 		setFilingStrategy(strategy: CalculationInput['filingStrategy']) {

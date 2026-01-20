@@ -62,6 +62,7 @@ export interface CalculationInput {
 	patentType: PatentType;
 	claims: number;
 	pages: number;
+	wordCount: number;
 	filingStrategy: FilingStrategy;
 	priorityDate: string | null;
 	technologyField: TechnologyField;
