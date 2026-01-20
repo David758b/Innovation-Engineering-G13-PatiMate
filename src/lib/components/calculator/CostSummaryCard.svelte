@@ -1,9 +1,18 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
+	import { Button } from '$lib/components/ui/button';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
+	import { exportToPDF } from '$lib/utils/pdf-export';
+	import { Download } from '@lucide/svelte';
 
 	const selectedCount = $derived(calculatorStore.input.countries.length);
 	const result = $derived(calculatorStore.calculationResult);
+
+	function handleExportPDF() {
+		if (result) {
+			exportToPDF(result, calculatorStore.input);
+		}
+	}
 
 	// Format currency
 	function formatCurrency(amount: number): string {
@@ -47,6 +56,15 @@
 					{result.countryCount === 1 ? 'country' : 'countries'} &middot;
 					{result.maintenancePeriod} year maintenance
 				</p>
+				<Button
+					variant="outline"
+					size="sm"
+					onclick={handleExportPDF}
+					class="mt-3 border-green-500/50 text-green-400 hover:bg-green-500/10 hover:text-green-300"
+				>
+					<Download class="mr-2 h-4 w-4" />
+					Export PDF
+				</Button>
 			</div>
 
 			<!-- Cost Breakdown -->
