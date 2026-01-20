@@ -31,12 +31,13 @@
 	const hasCountries = $derived(calculatorStore.input.countries.length > 0);
 	const hasCalculationResult = $derived(calculatorStore.calculationResult !== null);
 	const filingStrategy = $derived(calculatorStore.input.filingStrategy);
+	const hasStrategySelected = $derived(filingStrategy !== null);
 	const hasBlocks = $derived(strategyStudioStore.blocks.length > 0);
 
 	// Load the appropriate strategy into the canvas when filing strategy changes
 	$effect(() => {
 		const strategy = filingStrategy;
-		if (strategy !== lastLoadedStrategy) {
+		if (strategy !== null && strategy !== lastLoadedStrategy) {
 			if (strategy === 'direct') {
 				strategyStudioStore.loadTemplate('direct');
 			} else if (strategy === 'pct') {
@@ -102,8 +103,8 @@
 						<h2 class="mb-4 text-lg font-semibold text-white">Cost Breakdown by Country</h2>
 						<CostBreakdownTable />
 					</div>
-				{:else}
-					<!-- Show strategy canvas preview -->
+				{:else if hasStrategySelected}
+					<!-- Show strategy canvas preview when a strategy is selected -->
 					<div class="flex h-[calc(100vh-120px)] flex-col overflow-hidden rounded-lg border border-white/10">
 						<!-- Header -->
 						<div class="flex items-center justify-between border-b border-white/10 bg-white/5 px-4 py-3">
@@ -125,8 +126,59 @@
 							{/if}
 						</div>
 					</div>
+				{:else}
+					<!-- No strategy selected - centered globe watermark -->
+					<div class="relative flex h-[calc(100vh-120px)] items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-slate-950/50">
+						<!-- Globe watermark -->
+						<svg class="h-64 w-64 opacity-10" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<circle class="globe-ring-outer" cx="32" cy="32" r="28" stroke="url(#watermark-gradient)" stroke-width="3" />
+							<ellipse class="globe-ring-equator" cx="32" cy="32" rx="28" ry="10" stroke="url(#watermark-gradient)" stroke-width="2" />
+							<ellipse class="globe-ring-meridian" cx="32" cy="32" rx="10" ry="28" stroke="url(#watermark-gradient)" stroke-width="2" />
+							<circle class="globe-center-dot" cx="32" cy="32" r="4" fill="#22c55e" />
+							<defs>
+								<linearGradient id="watermark-gradient" x1="0" y1="0" x2="64" y2="64">
+									<stop offset="0%" stop-color="#22c55e" />
+									<stop offset="100%" stop-color="#16a34a" />
+								</linearGradient>
+							</defs>
+						</svg>
+					</div>
 				{/if}
 			</section>
 		</main>
 	</div>
 {/if}
+
+<style>
+	.globe-ring-outer {
+		transform-origin: center;
+		animation: spin-z 12s linear infinite;
+	}
+	.globe-ring-equator {
+		transform-origin: center;
+		animation: spin-x 10s linear infinite;
+	}
+	.globe-ring-meridian {
+		transform-origin: center;
+		animation: spin-y 8s linear infinite;
+	}
+	.globe-center-dot {
+		animation: pulse 2s ease-in-out infinite;
+	}
+	@keyframes spin-z {
+		from { transform: rotate(0deg); }
+		to { transform: rotate(360deg); }
+	}
+	@keyframes spin-x {
+		from { transform: rotateX(0deg); }
+		to { transform: rotateX(360deg); }
+	}
+	@keyframes spin-y {
+		from { transform: rotateY(0deg); }
+		to { transform: rotateY(360deg); }
+	}
+	@keyframes pulse {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.6; }
+	}
+</style>

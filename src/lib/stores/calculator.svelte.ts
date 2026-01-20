@@ -36,7 +36,7 @@ const DEFAULT_INPUT: CalculationInput = {
 	patentType: 'utility',
 	claims: 20,
 	pages: 30,
-	filingStrategy: 'direct',
+	filingStrategy: null, // No strategy selected by default
 	priorityDate: null,
 	technologyField: 'mechanical',
 	translationNeeded: true

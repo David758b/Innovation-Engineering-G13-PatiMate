@@ -48,7 +48,7 @@
 			<Label class="text-sm text-slate-400">Filing Route</Label>
 			<div class="max-h-64 overflow-y-auto">
 				<RadioGroup.Root
-					value={calculatorStore.input.filingStrategy}
+					value={calculatorStore.input.filingStrategy ?? undefined}
 					onValueChange={handleStrategyChange}
 					class="flex flex-col gap-3"
 				>

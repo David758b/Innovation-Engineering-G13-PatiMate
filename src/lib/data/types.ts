@@ -1,8 +1,8 @@
 // Patent type options
 export type PatentType = 'utility' | 'design' | 'provisional';
 
-// Filing strategy options
-export type FilingStrategy = 'direct' | 'pct';
+// Filing strategy options (null means no strategy selected yet)
+export type FilingStrategy = 'direct' | 'pct' | string | null;
 
 // Technology field options
 export type TechnologyField =
