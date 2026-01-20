@@ -6,7 +6,8 @@
 	import { Switch } from '$lib/components/ui/switch';
 	import type { FilingStrategy } from '$lib/data/types';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
-	import { ChevronDown, ChevronUp } from '@lucide/svelte';
+	import { strategyStudioStore } from '$lib/stores/strategy-studio.svelte';
+	import { ChevronDown, ChevronUp, Sparkles } from '@lucide/svelte';
 
 	let isExpanded = $state(false);
 
@@ -22,6 +23,9 @@
 			description: 'File via Patent Cooperation Treaty'
 		}
 	];
+
+	// Derived list of custom strategies
+	const customStrategies = $derived(strategyStudioStore.customStrategies);
 
 	function handleStrategyChange(value: string) {
 		calculatorStore.setFilingStrategy(value as FilingStrategy);
@@ -53,32 +57,66 @@
 		<!-- Filing Route -->
 		<div class="space-y-2">
 			<Label class="text-sm text-slate-400">Filing Route</Label>
-			<RadioGroup.Root
-				value={calculatorStore.input.filingStrategy}
-				onValueChange={handleStrategyChange}
-				class="flex flex-col gap-3"
-			>
-				{#each FILING_STRATEGIES as strategy}
-					<div
-						class="flex items-start gap-2 rounded-lg border border-white/10 p-3 hover:bg-white/5"
-					>
-						<RadioGroup.Item
-							value={strategy.value}
-							id={`strategy-${strategy.value}`}
-							class="mt-0.5 border-white/30 text-green-500 data-[state=checked]:border-green-500 data-[state=checked]:bg-green-500"
-						/>
-						<div>
-							<Label
-								for={`strategy-${strategy.value}`}
-								class="cursor-pointer text-sm font-medium text-slate-200"
-							>
-								{strategy.label}
-							</Label>
-							<p class="text-xs text-slate-500">{strategy.description}</p>
+			<div class="max-h-64 overflow-y-auto">
+				<RadioGroup.Root
+					value={calculatorStore.input.filingStrategy}
+					onValueChange={handleStrategyChange}
+					class="flex flex-col gap-3"
+				>
+					{#each FILING_STRATEGIES as strategy}
+						<div
+							class="flex items-start gap-2 rounded-lg border border-white/10 p-3 hover:bg-white/5"
+						>
+							<RadioGroup.Item
+								value={strategy.value}
+								id={`strategy-${strategy.value}`}
+								class="mt-0.5 border-white/30 text-green-500 data-[state=checked]:border-green-500 data-[state=checked]:bg-green-500"
+							/>
+							<div>
+								<Label
+									for={`strategy-${strategy.value}`}
+									class="cursor-pointer text-sm font-medium text-slate-200"
+								>
+									{strategy.label}
+								</Label>
+								<p class="text-xs text-slate-500">{strategy.description}</p>
+							</div>
 						</div>
-					</div>
-				{/each}
-			</RadioGroup.Root>
+					{/each}
+
+					<!-- Custom Strategies -->
+					{#if customStrategies.length > 0}
+						<div class="pt-2">
+							<p class="mb-2 flex items-center gap-1.5 text-xs font-medium text-slate-500">
+								<Sparkles class="h-3 w-3" />
+								Custom Strategies
+							</p>
+							{#each customStrategies as customStrategy}
+								<div
+									class="mb-2 flex items-start gap-2 rounded-lg border border-purple-500/30 bg-purple-500/5 p-3 hover:bg-purple-500/10"
+								>
+									<RadioGroup.Item
+										value={`custom-${customStrategy.id}`}
+										id={`strategy-custom-${customStrategy.id}`}
+										class="mt-0.5 border-white/30 text-purple-500 data-[state=checked]:border-purple-500 data-[state=checked]:bg-purple-500"
+									/>
+									<div class="min-w-0 flex-1">
+										<Label
+											for={`strategy-custom-${customStrategy.id}`}
+											class="cursor-pointer text-sm font-medium text-slate-200"
+										>
+											{customStrategy.name}
+										</Label>
+										<p class="text-xs text-slate-500">
+											{customStrategy.blocks.length} blocks, {customStrategy.connections.length} connections
+										</p>
+									</div>
+								</div>
+							{/each}
+						</div>
+					{/if}
+				</RadioGroup.Root>
+			</div>
 		</div>
 
 		<!-- Priority Date -->
