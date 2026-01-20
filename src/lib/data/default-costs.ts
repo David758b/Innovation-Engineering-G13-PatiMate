@@ -38,22 +38,6 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 		maintenanceFeesYear1to5: 800,
 		requiresTranslation: false
 	},
-	MX: {
-		countryCode: 'MX',
-		name: 'Mexico',
-		flag: '🇲🇽',
-		region: 'North America',
-		officialFees: {
-			filing: 300,
-			search: 0,
-			examination: 400,
-			grant: 300
-		},
-		attorneyFees: 3500,
-		translationCostPerPage: 35,
-		maintenanceFeesYear1to5: 600,
-		requiresTranslation: true
-	},
 
 	// Europe
 	EP: {
@@ -71,150 +55,6 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 		translationCostPerPage: 0,
 		maintenanceFeesYear1to5: 3000,
 		requiresTranslation: false
-	},
-	GB: {
-		countryCode: 'GB',
-		name: 'United Kingdom',
-		flag: '🇬🇧',
-		region: 'Europe',
-		officialFees: {
-			filing: 250,
-			search: 200,
-			examination: 150,
-			grant: 100
-		},
-		attorneyFees: 4000,
-		translationCostPerPage: 0,
-		maintenanceFeesYear1to5: 700,
-		requiresTranslation: false
-	},
-	DE: {
-		countryCode: 'DE',
-		name: 'Germany',
-		flag: '🇩🇪',
-		region: 'Europe',
-		officialFees: {
-			filing: 60,
-			search: 300,
-			examination: 350,
-			grant: 200
-		},
-		attorneyFees: 5500,
-		translationCostPerPage: 45,
-		maintenanceFeesYear1to5: 900,
-		requiresTranslation: true
-	},
-	FR: {
-		countryCode: 'FR',
-		name: 'France',
-		flag: '🇫🇷',
-		region: 'Europe',
-		officialFees: {
-			filing: 40,
-			search: 500,
-			examination: 0,
-			grant: 100
-		},
-		attorneyFees: 5000,
-		translationCostPerPage: 45,
-		maintenanceFeesYear1to5: 700,
-		requiresTranslation: true
-	},
-	IT: {
-		countryCode: 'IT',
-		name: 'Italy',
-		flag: '🇮🇹',
-		region: 'Europe',
-		officialFees: {
-			filing: 50,
-			search: 0,
-			examination: 0,
-			grant: 200
-		},
-		attorneyFees: 4000,
-		translationCostPerPage: 40,
-		maintenanceFeesYear1to5: 600,
-		requiresTranslation: true
-	},
-	ES: {
-		countryCode: 'ES',
-		name: 'Spain',
-		flag: '🇪🇸',
-		region: 'Europe',
-		officialFees: {
-			filing: 120,
-			search: 0,
-			examination: 400,
-			grant: 150
-		},
-		attorneyFees: 4000,
-		translationCostPerPage: 35,
-		maintenanceFeesYear1to5: 500,
-		requiresTranslation: true
-	},
-	NL: {
-		countryCode: 'NL',
-		name: 'Netherlands',
-		flag: '🇳🇱',
-		region: 'Europe',
-		officialFees: {
-			filing: 80,
-			search: 0,
-			examination: 0,
-			grant: 100
-		},
-		attorneyFees: 4500,
-		translationCostPerPage: 0,
-		maintenanceFeesYear1to5: 600,
-		requiresTranslation: false
-	},
-	CH: {
-		countryCode: 'CH',
-		name: 'Switzerland',
-		flag: '🇨🇭',
-		region: 'Europe',
-		officialFees: {
-			filing: 200,
-			search: 0,
-			examination: 0,
-			grant: 200
-		},
-		attorneyFees: 5000,
-		translationCostPerPage: 0,
-		maintenanceFeesYear1to5: 800,
-		requiresTranslation: false
-	},
-	SE: {
-		countryCode: 'SE',
-		name: 'Sweden',
-		flag: '🇸🇪',
-		region: 'Europe',
-		officialFees: {
-			filing: 100,
-			search: 0,
-			examination: 200,
-			grant: 100
-		},
-		attorneyFees: 4000,
-		translationCostPerPage: 0,
-		maintenanceFeesYear1to5: 600,
-		requiresTranslation: false
-	},
-	PL: {
-		countryCode: 'PL',
-		name: 'Poland',
-		flag: '🇵🇱',
-		region: 'Europe',
-		officialFees: {
-			filing: 100,
-			search: 0,
-			examination: 150,
-			grant: 100
-		},
-		attorneyFees: 3000,
-		translationCostPerPage: 30,
-		maintenanceFeesYear1to5: 400,
-		requiresTranslation: true
 	},
 
 	// Asia-Pacific
@@ -298,54 +138,6 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 		maintenanceFeesYear1to5: 900,
 		requiresTranslation: false
 	},
-	SG: {
-		countryCode: 'SG',
-		name: 'Singapore',
-		flag: '🇸🇬',
-		region: 'Asia-Pacific',
-		officialFees: {
-			filing: 160,
-			search: 0,
-			examination: 500,
-			grant: 150
-		},
-		attorneyFees: 4500,
-		translationCostPerPage: 0,
-		maintenanceFeesYear1to5: 600,
-		requiresTranslation: false
-	},
-	TW: {
-		countryCode: 'TW',
-		name: 'Taiwan',
-		flag: '🇹🇼',
-		region: 'Asia-Pacific',
-		officialFees: {
-			filing: 100,
-			search: 0,
-			examination: 200,
-			grant: 100
-		},
-		attorneyFees: 3500,
-		translationCostPerPage: 45,
-		maintenanceFeesYear1to5: 400,
-		requiresTranslation: true
-	},
-	HK: {
-		countryCode: 'HK',
-		name: 'Hong Kong',
-		flag: '🇭🇰',
-		region: 'Asia-Pacific',
-		officialFees: {
-			filing: 200,
-			search: 0,
-			examination: 0,
-			grant: 200
-		},
-		attorneyFees: 4000,
-		translationCostPerPage: 0,
-		maintenanceFeesYear1to5: 500,
-		requiresTranslation: false
-	},
 	NZ: {
 		countryCode: 'NZ',
 		name: 'New Zealand',
@@ -380,109 +172,13 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 		maintenanceFeesYear1to5: 500,
 		requiresTranslation: true
 	},
-	AR: {
-		countryCode: 'AR',
-		name: 'Argentina',
-		flag: '🇦🇷',
-		region: 'Latin America',
-		officialFees: {
-			filing: 150,
-			search: 0,
-			examination: 200,
-			grant: 150
-		},
-		attorneyFees: 3000,
-		translationCostPerPage: 35,
-		maintenanceFeesYear1to5: 400,
-		requiresTranslation: true
-	},
-	CL: {
-		countryCode: 'CL',
-		name: 'Chile',
-		flag: '🇨🇱',
-		region: 'Latin America',
-		officialFees: {
-			filing: 200,
-			search: 0,
-			examination: 250,
-			grant: 150
-		},
-		attorneyFees: 3000,
-		translationCostPerPage: 35,
-		maintenanceFeesYear1to5: 450,
-		requiresTranslation: true
-	},
-	CO: {
-		countryCode: 'CO',
-		name: 'Colombia',
-		flag: '🇨🇴',
-		region: 'Latin America',
-		officialFees: {
-			filing: 150,
-			search: 0,
-			examination: 200,
-			grant: 100
-		},
-		attorneyFees: 2800,
-		translationCostPerPage: 35,
-		maintenanceFeesYear1to5: 400,
-		requiresTranslation: true
-	},
 
-	// Middle East & Africa
-	IL: {
-		countryCode: 'IL',
-		name: 'Israel',
-		flag: '🇮🇱',
-		region: 'Middle East & Africa',
-		officialFees: {
-			filing: 250,
-			search: 0,
-			examination: 500,
-			grant: 250
-		},
-		attorneyFees: 5000,
-		translationCostPerPage: 0,
-		maintenanceFeesYear1to5: 700,
-		requiresTranslation: false
-	},
-	AE: {
-		countryCode: 'AE',
-		name: 'United Arab Emirates',
-		flag: '🇦🇪',
-		region: 'Middle East & Africa',
-		officialFees: {
-			filing: 400,
-			search: 0,
-			examination: 500,
-			grant: 300
-		},
-		attorneyFees: 4500,
-		translationCostPerPage: 50,
-		maintenanceFeesYear1to5: 600,
-		requiresTranslation: true
-	},
-	SA: {
-		countryCode: 'SA',
-		name: 'Saudi Arabia',
-		flag: '🇸🇦',
-		region: 'Middle East & Africa',
-		officialFees: {
-			filing: 350,
-			search: 0,
-			examination: 450,
-			grant: 250
-		},
-		attorneyFees: 4500,
-		translationCostPerPage: 50,
-		maintenanceFeesYear1to5: 550,
-		requiresTranslation: true
-	},
+	// Africa
 	ZA: {
 		countryCode: 'ZA',
 		name: 'South Africa',
 		flag: '🇿🇦',
-		region: 'Middle East & Africa',
+		region: 'Africa',
 		officialFees: {
 			filing: 100,
 			search: 0,
