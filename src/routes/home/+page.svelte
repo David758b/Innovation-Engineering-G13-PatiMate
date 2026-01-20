@@ -7,6 +7,13 @@
 	import Logo from '$lib/components/Logo.svelte';
 	import PatentDetailsForm from '$lib/components/calculator/PatentDetailsForm.svelte';
 	import SettingsModal from '$lib/components/calculator/SettingsModal.svelte';
+	import { calculatorStore } from '$lib/stores/calculator.svelte';
+
+	function handleCalculate() {
+		calculatorStore.calculate();
+	}
+
+	const hasCountries = $derived(calculatorStore.input.countries.length > 0);
 </script>
 
 <div class="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100">
@@ -37,7 +44,9 @@
 			<div class="pt-4">
 				<Button
 					size="lg"
-					class="w-full bg-green-500 py-6 text-lg font-semibold text-slate-900 shadow-lg shadow-green-500/25 transition-all hover:bg-green-400 hover:shadow-green-500/40"
+					disabled={!hasCountries}
+					onclick={handleCalculate}
+					class="w-full bg-green-500 py-6 text-lg font-semibold text-slate-900 shadow-lg shadow-green-500/25 transition-all hover:bg-green-400 hover:shadow-green-500/40 disabled:cursor-not-allowed disabled:opacity-50"
 				>
 					Calculate Costs
 				</Button>

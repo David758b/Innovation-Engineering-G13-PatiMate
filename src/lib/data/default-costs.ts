@@ -1,4 +1,13 @@
-import type { CountryCosts } from './types';
+import type { CountryCosts, GlobalSettings } from './types';
+
+/**
+ * Default global settings
+ */
+export const DEFAULT_GLOBAL_SETTINGS: GlobalSettings = {
+	attorneyFee: 3000, // User's local/home attorney fee
+	flatFee: 500, // Fixed service fee per filing
+	maintenancePeriod: 5 // Default to 5 years
+};
 
 /**
  * Default cost data for all supported countries.
@@ -17,9 +26,9 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 			examination: 800,
 			grant: 1200
 		},
-		attorneyFees: 8000,
+		foreignAttorneyFee: 8000,
 		translationCostPerPage: 0,
-		maintenanceFeesYear1to5: 1600,
+		maintenanceFeesAnnual: 320,
 		requiresTranslation: false
 	},
 	CA: {
@@ -33,9 +42,9 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 			examination: 800,
 			grant: 400
 		},
-		attorneyFees: 5000,
+		foreignAttorneyFee: 5000,
 		translationCostPerPage: 0,
-		maintenanceFeesYear1to5: 800,
+		maintenanceFeesAnnual: 160,
 		requiresTranslation: false
 	},
 
@@ -51,9 +60,9 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 			examination: 1800,
 			grant: 1000
 		},
-		attorneyFees: 12000,
+		foreignAttorneyFee: 12000,
 		translationCostPerPage: 0,
-		maintenanceFeesYear1to5: 3000,
+		maintenanceFeesAnnual: 600,
 		requiresTranslation: false
 	},
 
@@ -69,9 +78,9 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 			examination: 250,
 			grant: 250
 		},
-		attorneyFees: 4000,
+		foreignAttorneyFee: 4000,
 		translationCostPerPage: 50,
-		maintenanceFeesYear1to5: 500,
+		maintenanceFeesAnnual: 100,
 		requiresTranslation: true
 	},
 	JP: {
@@ -85,9 +94,9 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 			examination: 600,
 			grant: 300
 		},
-		attorneyFees: 7000,
+		foreignAttorneyFee: 7000,
 		translationCostPerPage: 60,
-		maintenanceFeesYear1to5: 1200,
+		maintenanceFeesAnnual: 240,
 		requiresTranslation: true
 	},
 	KR: {
@@ -101,9 +110,9 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 			examination: 400,
 			grant: 200
 		},
-		attorneyFees: 5000,
+		foreignAttorneyFee: 5000,
 		translationCostPerPage: 55,
-		maintenanceFeesYear1to5: 800,
+		maintenanceFeesAnnual: 160,
 		requiresTranslation: true
 	},
 	IN: {
@@ -117,9 +126,9 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 			examination: 160,
 			grant: 60
 		},
-		attorneyFees: 2500,
+		foreignAttorneyFee: 2500,
 		translationCostPerPage: 0,
-		maintenanceFeesYear1to5: 300,
+		maintenanceFeesAnnual: 60,
 		requiresTranslation: false
 	},
 	AU: {
@@ -133,9 +142,9 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 			examination: 400,
 			grant: 300
 		},
-		attorneyFees: 5000,
+		foreignAttorneyFee: 5000,
 		translationCostPerPage: 0,
-		maintenanceFeesYear1to5: 900,
+		maintenanceFeesAnnual: 180,
 		requiresTranslation: false
 	},
 	NZ: {
@@ -149,9 +158,9 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 			examination: 350,
 			grant: 200
 		},
-		attorneyFees: 4000,
+		foreignAttorneyFee: 4000,
 		translationCostPerPage: 0,
-		maintenanceFeesYear1to5: 600,
+		maintenanceFeesAnnual: 120,
 		requiresTranslation: false
 	},
 
@@ -167,9 +176,9 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 			examination: 150,
 			grant: 100
 		},
-		attorneyFees: 3500,
+		foreignAttorneyFee: 3500,
 		translationCostPerPage: 35,
-		maintenanceFeesYear1to5: 500,
+		maintenanceFeesAnnual: 100,
 		requiresTranslation: true
 	},
 
@@ -185,9 +194,9 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 			examination: 0,
 			grant: 100
 		},
-		attorneyFees: 3000,
+		foreignAttorneyFee: 3000,
 		translationCostPerPage: 0,
-		maintenanceFeesYear1to5: 400,
+		maintenanceFeesAnnual: 80,
 		requiresTranslation: false
 	}
 };
