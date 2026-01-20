@@ -1,9 +1,7 @@
 <script lang="ts">
 	import * as Collapsible from '$lib/components/ui/collapsible';
-	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as RadioGroup from '$lib/components/ui/radio-group';
-	import { Switch } from '$lib/components/ui/switch';
 	import type { FilingStrategy } from '$lib/data/types';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
 	import { strategyStudioStore } from '$lib/stores/strategy-studio.svelte';
@@ -29,15 +27,6 @@
 
 	function handleStrategyChange(value: string) {
 		calculatorStore.setFilingStrategy(value as FilingStrategy);
-	}
-
-	function handleDateChange(e: Event) {
-		const target = e.target as HTMLInputElement;
-		calculatorStore.setPriorityDate(target.value || null);
-	}
-
-	function handleTranslationToggle(checked: boolean) {
-		calculatorStore.setTranslationNeeded(checked);
 	}
 </script>
 
@@ -119,33 +108,5 @@
 			</div>
 		</div>
 
-		<!-- Priority Date -->
-		<div class="space-y-2">
-			<Label for="priority-date" class="text-sm text-slate-400">Priority Date (optional)</Label>
-			<Input
-				id="priority-date"
-				type="date"
-				value={calculatorStore.input.priorityDate || ''}
-				oninput={handleDateChange}
-				class="border-white/20 bg-white/5 text-white [color-scheme:dark]"
-			/>
-			<p class="text-xs text-slate-500">Used to calculate filing deadlines</p>
-		</div>
-
-		<!-- Translation Toggle -->
-		<div class="flex items-center justify-between rounded-lg border border-white/10 p-3">
-			<div>
-				<Label for="translation-toggle" class="text-sm font-medium text-slate-200">
-					Include Translation Costs
-				</Label>
-				<p class="text-xs text-slate-500">Calculate translation fees for non-English countries</p>
-			</div>
-			<Switch
-				id="translation-toggle"
-				checked={calculatorStore.input.translationNeeded}
-				onCheckedChange={handleTranslationToggle}
-				class="data-[state=checked]:bg-green-500"
-			/>
-		</div>
 	</Collapsible.Content>
 </Collapsible.Root>
