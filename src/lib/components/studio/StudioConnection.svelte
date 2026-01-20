@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { strategyStudioStore, type StudioConnection } from '$lib/stores/strategy-studio.svelte';
+	import { strategyStudioStore, type StudioConnection, type ConnectionPort, type StudioBlock } from '$lib/stores/strategy-studio.svelte';
 	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
@@ -32,36 +32,97 @@
 	const sourceBlock = $derived(strategyStudioStore.blocks.find(b => b.id === connection.fromBlockId));
 	const targetBlock = $derived(strategyStudioStore.blocks.find(b => b.id === connection.toBlockId));
 
-	// Calculate path between blocks
+	// Get port position on a block
+	function getPortPosition(block: StudioBlock, port: ConnectionPort): { x: number; y: number } {
+		switch (port) {
+			case 'top':
+				return { x: block.x + block.width / 2, y: block.y };
+			case 'bottom':
+				return { x: block.x + block.width / 2, y: block.y + block.height };
+			case 'left':
+				return { x: block.x, y: block.y + block.height / 2 };
+			case 'right':
+				return { x: block.x + block.width, y: block.y + block.height / 2 };
+		}
+	}
+
+	// Get control point offset direction for a port
+	function getControlOffset(port: ConnectionPort, distance: number): { dx: number; dy: number } {
+		switch (port) {
+			case 'top':
+				return { dx: 0, dy: -distance };
+			case 'bottom':
+				return { dx: 0, dy: distance };
+			case 'left':
+				return { dx: -distance, dy: 0 };
+			case 'right':
+				return { dx: distance, dy: 0 };
+		}
+	}
+
+	// Calculate path between blocks based on their ports
 	const path = $derived(() => {
 		if (!sourceBlock || !targetBlock) return '';
 
-		// Start from bottom center of source
-		const startX = sourceBlock.x + sourceBlock.width / 2;
-		const startY = sourceBlock.y + sourceBlock.height;
+		const fromPort = connection.fromPort || 'bottom';
+		const toPort = connection.toPort || 'top';
 
-		// End at top center of target
-		const endX = targetBlock.x + targetBlock.width / 2;
-		const endY = targetBlock.y;
+		const start = getPortPosition(sourceBlock, fromPort);
+		const end = getPortPosition(targetBlock, toPort);
 
-		// Create a curved bezier path
-		const midY = (startY + endY) / 2;
+		// Calculate distance for control points
+		const dx = Math.abs(end.x - start.x);
+		const dy = Math.abs(end.y - start.y);
+		const controlDistance = Math.max(50, Math.min(150, Math.max(dx, dy) / 2));
 
-		return `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`;
+		// Get control point offsets based on port directions
+		const startOffset = getControlOffset(fromPort, controlDistance);
+		const endOffset = getControlOffset(toPort, controlDistance);
+
+		// Control points
+		const cp1x = start.x + startOffset.dx;
+		const cp1y = start.y + startOffset.dy;
+		const cp2x = end.x + endOffset.dx;
+		const cp2y = end.y + endOffset.dy;
+
+		return `M ${start.x} ${start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${end.x} ${end.y}`;
+	});
+
+	// Get arrow rotation based on target port
+	function getArrowRotation(port: ConnectionPort): number {
+		switch (port) {
+			case 'top':
+				return 180; // Arrow points down into top
+			case 'bottom':
+				return 0; // Arrow points up into bottom
+			case 'left':
+				return 90; // Arrow points right into left
+			case 'right':
+				return -90; // Arrow points left into right
+		}
+	}
+
+	// Get arrow position (at the target port)
+	const arrowPos = $derived(() => {
+		if (!targetBlock) return { x: 0, y: 0, rotation: 0 };
+		const toPort = connection.toPort || 'top';
+		const pos = getPortPosition(targetBlock, toPort);
+		return { ...pos, rotation: getArrowRotation(toPort) };
 	});
 
 	// Calculate label position (middle of the path)
 	const labelPos = $derived(() => {
 		if (!sourceBlock || !targetBlock) return { x: 0, y: 0 };
 
-		const startX = sourceBlock.x + sourceBlock.width / 2;
-		const startY = sourceBlock.y + sourceBlock.height;
-		const endX = targetBlock.x + targetBlock.width / 2;
-		const endY = targetBlock.y;
+		const fromPort = connection.fromPort || 'bottom';
+		const toPort = connection.toPort || 'top';
+
+		const start = getPortPosition(sourceBlock, fromPort);
+		const end = getPortPosition(targetBlock, toPort);
 
 		return {
-			x: (startX + endX) / 2,
-			y: (startY + endY) / 2
+			x: (start.x + end.x) / 2,
+			y: (start.y + end.y) / 2
 		};
 	});
 
@@ -134,7 +195,7 @@
 		<polygon
 			points="-6,-8 0,0 6,-8"
 			fill={isSelected ? '#22c55e' : isHovered ? '#94a3b8' : '#64748b'}
-			transform="translate({targetBlock.x + targetBlock.width / 2}, {targetBlock.y}) rotate(180)"
+			transform="translate({arrowPos().x}, {arrowPos().y}) rotate({arrowPos().rotation})"
 			class="transition-all duration-300"
 			style={isAnimating ? 'opacity: 0; animation: fadeIn 0.2s ease-out 0.3s forwards;' : ''}
 		/>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { strategyStudioStore, type StudioBlock } from '$lib/stores/strategy-studio.svelte';
+	import { strategyStudioStore, type StudioBlock, type ConnectionPort } from '$lib/stores/strategy-studio.svelte';
 	import { FileText, DollarSign, Puzzle, Link } from '@lucide/svelte';
 	import { scale, fade } from 'svelte/transition';
 	import { backOut } from 'svelte/easing';
@@ -15,7 +15,7 @@
 	let dragOffset = $state({ x: 0, y: 0 });
 
 	const isSelected = $derived(!readonly && strategyStudioStore.selectedBlockId === block.id);
-	const isConnectionSource = $derived(!readonly && strategyStudioStore.connectionStart === block.id);
+	const isConnectionSource = $derived(!readonly && strategyStudioStore.connectionStart?.blockId === block.id);
 
 	function handleMouseDown(e: MouseEvent) {
 		if (readonly) return; // No interaction in readonly mode
@@ -23,8 +23,9 @@
 		e.stopPropagation();
 
 		// If we're drawing a connection, clicking on a block completes it
+		// Use 'top' as default port when clicking on block body
 		if (strategyStudioStore.isDrawingConnection) {
-			strategyStudioStore.completeConnection(block.id);
+			strategyStudioStore.completeConnection(block.id, 'top');
 			return;
 		}
 
@@ -58,16 +59,18 @@
 		e.preventDefault();
 	}
 
-	function handleConnectionClick(e: MouseEvent) {
-		if (readonly) return;
-		e.stopPropagation();
-		if (strategyStudioStore.isDrawingConnection) {
-			// Complete the connection
-			strategyStudioStore.completeConnection(block.id);
-		} else {
-			// Start a new connection
-			strategyStudioStore.startConnection(block.id);
-		}
+	function handleConnectionClick(port: ConnectionPort) {
+		return (e: MouseEvent) => {
+			if (readonly) return;
+			e.stopPropagation();
+			if (strategyStudioStore.isDrawingConnection) {
+				// Complete the connection to this port
+				strategyStudioStore.completeConnection(block.id, port);
+			} else {
+				// Start a new connection from this port
+				strategyStudioStore.startConnection(block.id, port);
+			}
+		};
 	}
 
 	// Get block color based on type
@@ -129,24 +132,46 @@
 		</div>
 	</div>
 
-	<!-- Connection handles (top and bottom) - hidden in readonly mode -->
+	<!-- Connection handles (all four sides) - hidden in readonly mode -->
 	{#if !readonly}
+		<!-- Top handle -->
 		<button
-			class="absolute -top-2 left-1/2 z-10 h-5 w-5 -translate-x-1/2 rounded-full border-2 border-slate-600 bg-slate-800 transition-colors hover:border-green-400 hover:bg-green-500/20 {strategyStudioStore.isDrawingConnection ? 'animate-pulse border-green-400' : ''}"
+			class="absolute -top-2 left-1/2 z-10 h-4 w-4 -translate-x-1/2 rounded-full border-2 border-slate-600 bg-slate-800 transition-colors hover:border-green-400 hover:bg-green-500/20 {strategyStudioStore.isDrawingConnection ? 'animate-pulse border-green-400' : ''}"
 			onmousedown={handleConnectionMouseDown}
-			onclick={handleConnectionClick}
+			onclick={handleConnectionClick('top')}
 			title={strategyStudioStore.isDrawingConnection ? "Click to connect here" : "Click to start connection"}
 		>
 			<span class="sr-only">Connect from top</span>
 		</button>
 
+		<!-- Bottom handle -->
 		<button
-			class="absolute -bottom-2 left-1/2 z-10 h-5 w-5 -translate-x-1/2 rounded-full border-2 border-slate-600 bg-slate-800 transition-colors hover:border-green-400 hover:bg-green-500/20 {strategyStudioStore.isDrawingConnection ? 'animate-pulse border-green-400' : ''}"
+			class="absolute -bottom-2 left-1/2 z-10 h-4 w-4 -translate-x-1/2 rounded-full border-2 border-slate-600 bg-slate-800 transition-colors hover:border-green-400 hover:bg-green-500/20 {strategyStudioStore.isDrawingConnection ? 'animate-pulse border-green-400' : ''}"
 			onmousedown={handleConnectionMouseDown}
-			onclick={handleConnectionClick}
+			onclick={handleConnectionClick('bottom')}
 			title={strategyStudioStore.isDrawingConnection ? "Click to connect here" : "Click to start connection"}
 		>
 			<span class="sr-only">Connect from bottom</span>
+		</button>
+
+		<!-- Left handle -->
+		<button
+			class="absolute -left-2 top-1/2 z-10 h-4 w-4 -translate-y-1/2 rounded-full border-2 border-slate-600 bg-slate-800 transition-colors hover:border-green-400 hover:bg-green-500/20 {strategyStudioStore.isDrawingConnection ? 'animate-pulse border-green-400' : ''}"
+			onmousedown={handleConnectionMouseDown}
+			onclick={handleConnectionClick('left')}
+			title={strategyStudioStore.isDrawingConnection ? "Click to connect here" : "Click to start connection"}
+		>
+			<span class="sr-only">Connect from left</span>
+		</button>
+
+		<!-- Right handle -->
+		<button
+			class="absolute -right-2 top-1/2 z-10 h-4 w-4 -translate-y-1/2 rounded-full border-2 border-slate-600 bg-slate-800 transition-colors hover:border-green-400 hover:bg-green-500/20 {strategyStudioStore.isDrawingConnection ? 'animate-pulse border-green-400' : ''}"
+			onmousedown={handleConnectionMouseDown}
+			onclick={handleConnectionClick('right')}
+			title={strategyStudioStore.isDrawingConnection ? "Click to connect here" : "Click to start connection"}
+		>
+			<span class="sr-only">Connect from right</span>
 		</button>
 	{/if}
 </div>

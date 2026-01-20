@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { strategyStudioStore, type StudioBlock } from '$lib/stores/strategy-studio.svelte';
+	import { strategyStudioStore, type StudioBlock, type ConnectionPort } from '$lib/stores/strategy-studio.svelte';
 	import StudioBlockComponent from './StudioBlock.svelte';
 	import StudioConnectionComponent from './StudioConnection.svelte';
 
@@ -124,22 +124,62 @@
 		e.preventDefault();
 	}
 
+	// Get port position on a block
+	function getPortPosition(block: StudioBlock, port: ConnectionPort): { x: number; y: number } {
+		switch (port) {
+			case 'top':
+				return { x: block.x + block.width / 2, y: block.y };
+			case 'bottom':
+				return { x: block.x + block.width / 2, y: block.y + block.height };
+			case 'left':
+				return { x: block.x, y: block.y + block.height / 2 };
+			case 'right':
+				return { x: block.x + block.width, y: block.y + block.height / 2 };
+		}
+	}
+
+	// Get control point offset direction for a port
+	function getControlOffset(port: ConnectionPort, distance: number): { dx: number; dy: number } {
+		switch (port) {
+			case 'top':
+				return { dx: 0, dy: -distance };
+			case 'bottom':
+				return { dx: 0, dy: distance };
+			case 'left':
+				return { dx: -distance, dy: 0 };
+			case 'right':
+				return { dx: distance, dy: 0 };
+		}
+	}
+
 	// Calculate connection line from source block to mouse (not shown in readonly)
 	function getConnectionPreviewPath(): string {
 		if (readonly) return '';
 		if (!strategyStudioStore.isDrawingConnection || !strategyStudioStore.connectionStart) return '';
 
-		const sourceBlock = strategyStudioStore.blocks.find(b => b.id === strategyStudioStore.connectionStart);
+		const { blockId, port } = strategyStudioStore.connectionStart;
+		const sourceBlock = strategyStudioStore.blocks.find(b => b.id === blockId);
 		if (!sourceBlock) return '';
 
-		const startX = sourceBlock.x + sourceBlock.width / 2;
-		const startY = sourceBlock.y + sourceBlock.height;
-		const endX = mousePos.x;
-		const endY = mousePos.y;
+		const start = getPortPosition(sourceBlock, port);
+		const end = mousePos;
 
-		// Curved path
-		const midY = (startY + endY) / 2;
-		return `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`;
+		// Calculate distance for control points
+		const dx = Math.abs(end.x - start.x);
+		const dy = Math.abs(end.y - start.y);
+		const controlDistance = Math.max(50, Math.min(150, Math.max(dx, dy) / 2));
+
+		// Get control point offset based on port direction
+		const startOffset = getControlOffset(port, controlDistance);
+
+		// Control points - start uses port direction, end just curves toward mouse
+		const cp1x = start.x + startOffset.dx;
+		const cp1y = start.y + startOffset.dy;
+		// For preview, use a simple mid-point control that curves toward the mouse
+		const cp2x = end.x;
+		const cp2y = end.y - controlDistance * Math.sign(end.y - start.y || 1);
+
+		return `M ${start.x} ${start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${end.x} ${end.y}`;
 	}
 </script>
 

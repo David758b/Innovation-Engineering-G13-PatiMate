@@ -1,6 +1,7 @@
 // Strategy Studio Store - manages blocks, connections, and custom strategies
 
 export type BlockType = 'filing' | 'cost' | 'custom';
+export type ConnectionPort = 'top' | 'bottom' | 'left' | 'right';
 
 export interface StudioBlock {
 	id: string;
@@ -18,6 +19,8 @@ export interface StudioConnection {
 	id: string;
 	fromBlockId: string;
 	toBlockId: string;
+	fromPort: ConnectionPort;
+	toPort: ConnectionPort;
 	label: string; // e.g., "12 months", "If approved"
 	style: 'solid' | 'dashed';
 }
@@ -78,7 +81,7 @@ function createStrategyStudioStore() {
 
 	// Connection drawing state
 	let isDrawingConnection = $state(false);
-	let connectionStart = $state<string | null>(null);
+	let connectionStart = $state<{ blockId: string; port: ConnectionPort } | null>(null);
 
 	// Grid & snapping
 	let snapEnabled = $state(true);
@@ -341,9 +344,9 @@ function createStrategyStudioStore() {
 		},
 
 		// Connection operations
-		startConnection(fromBlockId: string) {
+		startConnection(fromBlockId: string, fromPort: ConnectionPort) {
 			isDrawingConnection = true;
-			connectionStart = fromBlockId;
+			connectionStart = { blockId: fromBlockId, port: fromPort };
 		},
 
 		cancelConnection() {
@@ -351,17 +354,22 @@ function createStrategyStudioStore() {
 			connectionStart = null;
 		},
 
-		completeConnection(toBlockId: string, label: string = '') {
-			if (connectionStart && connectionStart !== toBlockId) {
-				// Check if connection already exists
+		completeConnection(toBlockId: string, toPort: ConnectionPort, label: string = '') {
+			if (connectionStart && connectionStart.blockId !== toBlockId) {
+				// Check if connection already exists (same blocks and ports)
 				const exists = connections.some(
-					c => c.fromBlockId === connectionStart && c.toBlockId === toBlockId
+					c => c.fromBlockId === connectionStart!.blockId &&
+					     c.toBlockId === toBlockId &&
+					     c.fromPort === connectionStart!.port &&
+					     c.toPort === toPort
 				);
 				if (!exists) {
 					const connection: StudioConnection = {
 						id: generateId(),
-						fromBlockId: connectionStart,
+						fromBlockId: connectionStart.blockId,
 						toBlockId,
+						fromPort: connectionStart.port,
+						toPort,
 						label,
 						style: 'solid'
 					};
@@ -514,9 +522,9 @@ function createStrategyStudioStore() {
 				const grant = this.addBlock(BLOCK_TEMPLATES[4], 300, 440);
 
 				connections = [
-					{ id: generateId(), fromBlockId: priority.id, toBlockId: national.id, label: '12 months', style: 'solid' },
-					{ id: generateId(), fromBlockId: national.id, toBlockId: exam.id, label: '', style: 'solid' },
-					{ id: generateId(), fromBlockId: exam.id, toBlockId: grant.id, label: 'If approved', style: 'solid' }
+					{ id: generateId(), fromBlockId: priority.id, toBlockId: national.id, fromPort: 'bottom', toPort: 'top', label: '12 months', style: 'solid' },
+					{ id: generateId(), fromBlockId: national.id, toBlockId: exam.id, fromPort: 'bottom', toPort: 'top', label: '', style: 'solid' },
+					{ id: generateId(), fromBlockId: exam.id, toBlockId: grant.id, fromPort: 'bottom', toPort: 'top', label: 'If approved', style: 'solid' }
 				];
 			} else {
 				const priority = this.addBlock(BLOCK_TEMPLATES[0], 300, 50);
@@ -526,10 +534,10 @@ function createStrategyStudioStore() {
 				const grant = this.addBlock(BLOCK_TEMPLATES[4], 300, 570);
 
 				connections = [
-					{ id: generateId(), fromBlockId: priority.id, toBlockId: pct.id, label: '12 months', style: 'solid' },
-					{ id: generateId(), fromBlockId: pct.id, toBlockId: national.id, label: '30 months', style: 'solid' },
-					{ id: generateId(), fromBlockId: national.id, toBlockId: exam.id, label: '', style: 'solid' },
-					{ id: generateId(), fromBlockId: exam.id, toBlockId: grant.id, label: 'If approved', style: 'solid' }
+					{ id: generateId(), fromBlockId: priority.id, toBlockId: pct.id, fromPort: 'bottom', toPort: 'top', label: '12 months', style: 'solid' },
+					{ id: generateId(), fromBlockId: pct.id, toBlockId: national.id, fromPort: 'bottom', toPort: 'top', label: '30 months', style: 'solid' },
+					{ id: generateId(), fromBlockId: national.id, toBlockId: exam.id, fromPort: 'bottom', toPort: 'top', label: '', style: 'solid' },
+					{ id: generateId(), fromBlockId: exam.id, toBlockId: grant.id, fromPort: 'bottom', toPort: 'top', label: 'If approved', style: 'solid' }
 				];
 			}
 		},
