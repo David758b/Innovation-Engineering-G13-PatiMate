@@ -79,7 +79,7 @@
 				<div class="space-y-4 pt-2">
 					<CountrySelector />
 					<PatentDetailsForm />
-					<FilingStrategyForm />
+					<FilingStrategyForm onOpenStudio={handleOpenStudio} />
 				</div>
 
 				<!-- Calculate Button -->

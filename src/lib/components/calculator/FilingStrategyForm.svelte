@@ -1,10 +1,17 @@
 <script lang="ts">
 	import * as Collapsible from '$lib/components/ui/collapsible';
+	import { Button } from '$lib/components/ui/button';
 	import { Label } from '$lib/components/ui/label';
 	import * as RadioGroup from '$lib/components/ui/radio-group';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
 	import { strategyStudioStore } from '$lib/stores/strategy-studio.svelte';
-	import { ChevronDown, ChevronUp, Sparkles } from '@lucide/svelte';
+	import { ChevronDown, ChevronUp, Sparkles, Plus } from '@lucide/svelte';
+
+	interface Props {
+		onOpenStudio?: () => void;
+	}
+
+	let { onOpenStudio }: Props = $props();
 
 	let isExpanded = $state(false);
 
@@ -107,5 +114,17 @@
 			</div>
 		</div>
 
+		<!-- Create Custom Strategy Button -->
+		{#if onOpenStudio}
+			<Button
+				variant="outline"
+				size="sm"
+				onclick={onOpenStudio}
+				class="w-full border-dashed border-purple-500/50 text-purple-400 hover:border-purple-500 hover:bg-purple-500/10"
+			>
+				<Plus class="mr-2 h-4 w-4" />
+			
+			</Button>
+		{/if}
 	</Collapsible.Content>
 </Collapsible.Root>
