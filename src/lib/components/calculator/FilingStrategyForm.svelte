@@ -15,24 +15,35 @@
 
 	let isExpanded = $state(false);
 
-	const FILING_STRATEGIES: { value: 'direct' | 'pct'; label: string; description: string }[] = [
+	const FILING_STRATEGIES: { value: 'dk-pct'; label: string; description: string }[] = [
 		{
-			value: 'direct',
-			label: 'Direct National Filing',
-			description: 'File directly in each country'
-		},
-		{
-			value: 'pct',
-			label: 'PCT International',
-			description: 'File via Patent Cooperation Treaty'
+			value: 'dk-pct',
+			label: 'Danish Priority + PCT',
+			description: 'File in Denmark first, then PCT for international protection'
 		}
 	];
 
 	// Derived list of custom strategies
 	const customStrategies = $derived(strategyStudioStore.customStrategies);
 
+	// Track selection before click to enable toggle-off behavior
+	let selectionBeforeClick: string | null = null;
+
 	function handleStrategyChange(value: string) {
 		calculatorStore.setFilingStrategy(value);
+	}
+
+	function handleMouseDown(value: string) {
+		// Capture what was selected before the RadioGroup processes the click
+		selectionBeforeClick = calculatorStore.input.filingStrategy;
+	}
+
+	function handleStrategyClick(value: string) {
+		// Only toggle off if this item was already selected BEFORE the click
+		if (selectionBeforeClick === value) {
+			calculatorStore.setFilingStrategy(null);
+		}
+		selectionBeforeClick = null;
 	}
 </script>
 
@@ -59,8 +70,12 @@
 					class="flex flex-col gap-3"
 				>
 					{#each FILING_STRATEGIES as strategy}
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
-							class="flex items-start gap-2 rounded-lg border border-white/10 p-3 hover:bg-white/5"
+							class="flex cursor-pointer items-start gap-2 rounded-lg border border-white/10 p-3 hover:bg-white/5"
+							onmousedown={() => handleMouseDown(strategy.value)}
+							onclick={() => handleStrategyClick(strategy.value)}
 						>
 							<RadioGroup.Item
 								value={strategy.value}
@@ -87,8 +102,12 @@
 								Custom Strategies
 							</p>
 							{#each customStrategies as customStrategy}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_static_element_interactions -->
 								<div
-									class="mb-2 flex items-start gap-2 rounded-lg border border-purple-500/30 bg-purple-500/5 p-3 hover:bg-purple-500/10"
+									class="mb-2 flex cursor-pointer items-start gap-2 rounded-lg border border-purple-500/30 bg-purple-500/5 p-3 hover:bg-purple-500/10"
+									onmousedown={() => handleMouseDown(`custom-${customStrategy.id}`)}
+									onclick={() => handleStrategyClick(`custom-${customStrategy.id}`)}
 								>
 									<RadioGroup.Item
 										value={`custom-${customStrategy.id}`}
@@ -122,8 +141,7 @@
 				onclick={onOpenStudio}
 				class="w-full border-dashed border-purple-500/50 text-purple-400 hover:border-purple-500 hover:bg-purple-500/10"
 			>
-				<Plus class="mr-2 h-4 w-4" />
-			
+				<Plus class="h-4 w-4" />
 			</Button>
 		{/if}
 	</Collapsible.Content>

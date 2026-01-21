@@ -46,7 +46,7 @@
 		}
 	}
 
-	// Get control point offset direction for a port
+	// Get control point offset direction for a port (used for curved lines)
 	function getControlOffset(port: ConnectionPort, distance: number): { dx: number; dy: number } {
 		switch (port) {
 			case 'top':
@@ -61,6 +61,7 @@
 	}
 
 	// Calculate path between blocks based on their ports
+	// Supports both straight and curved lines based on connection.lineType
 	const path = $derived(() => {
 		if (!sourceBlock || !targetBlock) return '';
 
@@ -70,22 +71,28 @@
 		const start = getPortPosition(sourceBlock, fromPort);
 		const end = getPortPosition(targetBlock, toPort);
 
-		// Calculate distance for control points
-		const dx = Math.abs(end.x - start.x);
-		const dy = Math.abs(end.y - start.y);
-		const controlDistance = Math.max(50, Math.min(150, Math.max(dx, dy) / 2));
+		// Check lineType - default to curved for backwards compatibility
+		const lineType = connection.lineType || 'curved';
 
-		// Get control point offsets based on port directions
-		const startOffset = getControlOffset(fromPort, controlDistance);
-		const endOffset = getControlOffset(toPort, controlDistance);
+		if (lineType === 'straight') {
+			// Simple straight line
+			return `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
+		} else {
+			// Curved line using cubic Bezier
+			const dx = Math.abs(end.x - start.x);
+			const dy = Math.abs(end.y - start.y);
+			const controlDistance = Math.max(50, Math.min(150, Math.max(dx, dy) / 2));
 
-		// Control points
-		const cp1x = start.x + startOffset.dx;
-		const cp1y = start.y + startOffset.dy;
-		const cp2x = end.x + endOffset.dx;
-		const cp2y = end.y + endOffset.dy;
+			const startOffset = getControlOffset(fromPort, controlDistance);
+			const endOffset = getControlOffset(toPort, controlDistance);
 
-		return `M ${start.x} ${start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${end.x} ${end.y}`;
+			const cp1x = start.x + startOffset.dx;
+			const cp1y = start.y + startOffset.dy;
+			const cp2x = end.x + endOffset.dx;
+			const cp2y = end.y + endOffset.dy;
+
+			return `M ${start.x} ${start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${end.x} ${end.y}`;
+		}
 	});
 
 	// Get arrow rotation based on target port

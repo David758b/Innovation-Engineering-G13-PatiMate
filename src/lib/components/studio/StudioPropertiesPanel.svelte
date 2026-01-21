@@ -51,6 +51,12 @@
 		}
 	}
 
+	function handleConnectionLineTypeChange(lineType: string) {
+		if (selectedConnection) {
+			strategyStudioStore.updateConnection(selectedConnection.id, { lineType: lineType as 'straight' | 'curved' });
+		}
+	}
+
 	function handleDeleteBlock() {
 		if (selectedBlock) {
 			strategyStudioStore.deleteBlock(selectedBlock.id);
@@ -82,7 +88,7 @@
 			<!-- Block Type indicator -->
 			<div class="rounded-md border border-white/10 bg-white/5 p-2">
 				<p class="text-xs text-slate-500 uppercase tracking-wide">
-					{selectedBlock.type === 'filing' ? 'Filing Step' : selectedBlock.type === 'cost' ? 'Cost Item' : 'Custom Block'}
+					{selectedBlock.type === 'filing' ? 'Filing Step' : selectedBlock.type === 'cost' ? 'Cost Item' : selectedBlock.type === 'milestone' ? 'Milestone' : 'Custom Block'}
 				</p>
 			</div>
 
@@ -99,7 +105,7 @@
 			<!-- Cost (if applicable) -->
 			{#if selectedBlock.type !== 'custom' || selectedBlock.data.cost !== undefined}
 				<div class="space-y-1.5">
-					<Label class="text-xs text-slate-400">Estimated Cost (USD)</Label>
+					<Label class="text-xs text-slate-400">Estimated Cost (DKK)</Label>
 					<Input
 						type="number"
 						value={selectedBlock.data.cost ?? 0}
@@ -183,6 +189,28 @@
 						</Select.Item>
 						<Select.Item value="dashed" class="text-slate-300 hover:bg-slate-700">
 							Dashed
+						</Select.Item>
+					</Select.Content>
+				</Select.Root>
+			</div>
+
+			<!-- Line Type (Straight vs Curved) -->
+			<div class="space-y-1.5">
+				<Label class="text-xs text-slate-400">Line Type</Label>
+				<Select.Root
+					type="single"
+					value={selectedConnection.lineType || 'curved'}
+					onValueChange={handleConnectionLineTypeChange}
+				>
+					<Select.Trigger class="w-full border-white/20 bg-white/5 text-white">
+						{(selectedConnection.lineType || 'curved') === 'straight' ? 'Straight' : 'Curved'}
+					</Select.Trigger>
+					<Select.Content class="border-white/20 bg-slate-800">
+						<Select.Item value="curved" class="text-slate-300 hover:bg-slate-700">
+							Curved
+						</Select.Item>
+						<Select.Item value="straight" class="text-slate-300 hover:bg-slate-700">
+							Straight
 						</Select.Item>
 					</Select.Content>
 				</Select.Root>

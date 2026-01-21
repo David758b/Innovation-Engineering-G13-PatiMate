@@ -1,6 +1,6 @@
 // Strategy Studio Store - manages blocks, connections, and custom strategies
 
-export type BlockType = 'filing' | 'cost' | 'custom';
+export type BlockType = 'filing' | 'cost' | 'custom' | 'milestone';
 export type ConnectionPort = 'top' | 'bottom' | 'left' | 'right';
 
 export interface StudioBlock {
@@ -23,6 +23,7 @@ export interface StudioConnection {
 	toPort: ConnectionPort;
 	label: string; // e.g., "12 months", "If approved"
 	style: 'solid' | 'dashed';
+	lineType: 'straight' | 'curved';
 }
 
 export interface CustomStrategy {
@@ -33,25 +34,47 @@ export interface CustomStrategy {
 	createdAt: number;
 }
 
-// Predefined block templates
+// Predefined block templates (costs in DKK)
 export const BLOCK_TEMPLATES: Omit<StudioBlock, 'id' | 'x' | 'y'>[] = [
 	// Filing Steps
-	{ type: 'filing', category: 'priority', label: 'Priority Application', width: 200, height: 60, data: { cost: 3500 } },
-	{ type: 'filing', category: 'pct', label: 'PCT International', width: 200, height: 60, data: { cost: 7580, deadline: '12 months' } },
+	{ type: 'filing', category: 'priority', label: 'Priority Application', width: 200, height: 60, data: { cost: 25000 } },
+	{ type: 'filing', category: 'pct', label: 'PCT International', width: 200, height: 60, data: { cost: 53000, deadline: '12 months' } },
 	{ type: 'filing', category: 'national', label: 'National Phase Entry', width: 200, height: 60, data: { cost: 0, deadline: '30 months' } },
-	{ type: 'filing', category: 'examination', label: 'Examination', width: 200, height: 60, data: { cost: 2000 } },
-	{ type: 'filing', category: 'grant', label: 'Patent Grant', width: 200, height: 60, data: { cost: 1000 } },
+	{ type: 'filing', category: 'examination', label: 'Examination', width: 200, height: 60, data: { cost: 14000 } },
+	{ type: 'filing', category: 'grant', label: 'Patent Grant', width: 200, height: 60, data: { cost: 7000 } },
 	{ type: 'filing', category: 'maintenance', label: 'Maintenance/Annuities', width: 200, height: 60, data: { cost: 0 } },
+	// Danish-specific filing steps
+	{ type: 'filing', category: 'dk-application', label: 'DK Application', width: 180, height: 60, data: { cost: 14000, deadline: '0 months', note: 'Priority Date' } },
+	{ type: 'filing', category: 'novelty-search', label: 'Novelty Search', width: 180, height: 60, data: { cost: 10500, deadline: '7-9 months' } },
+	{ type: 'filing', category: 'publication', label: 'Publication', width: 180, height: 60, data: { cost: 0, deadline: '18 months' } },
+	{ type: 'filing', category: 'office-action', label: 'Office Action(s)', width: 180, height: 60, data: { cost: 7000 } },
+	{ type: 'filing', category: 'dk-patent', label: 'DK Patent', width: 180, height: 60, data: { cost: 3500, note: 'Max 20 years' } },
+	// PCT-specific steps
+	{ type: 'filing', category: 'pct-search', label: 'International Search Report', width: 180, height: 60, data: { cost: 15000, deadline: '16 months' } },
+	{ type: 'filing', category: 'pct-publication', label: 'Publication', width: 180, height: 60, data: { cost: 0, deadline: '18 months' } },
+	{ type: 'filing', category: 'pct-demand', label: 'Demand (option)', width: 180, height: 60, data: { cost: 12500, deadline: '22 months', note: 'Optional' } },
+	{ type: 'filing', category: 'pct-report', label: 'PCT Final Report', width: 180, height: 60, data: { cost: 0, deadline: '28 months' } },
+	// Regional entries
+	{ type: 'filing', category: 'ep-entry', label: 'EP Entry', width: 140, height: 50, data: { cost: 35000, deadline: '31 months' } },
+	{ type: 'filing', category: 'us-entry', label: 'US Entry', width: 140, height: 50, data: { cost: 28000, deadline: '30 months' } },
+	{ type: 'filing', category: 'cn-entry', label: 'CN Entry', width: 140, height: 50, data: { cost: 21000, deadline: '30 months' } },
 	// Cost Items
-	{ type: 'cost', category: 'translation', label: 'Translation', width: 160, height: 50, data: { cost: 2500 } },
-	{ type: 'cost', category: 'attorney', label: 'Attorney Fees', width: 160, height: 50, data: { cost: 3000 } },
-	{ type: 'cost', category: 'official', label: 'Official Fees', width: 160, height: 50, data: { cost: 500 } },
-	{ type: 'cost', category: 'search', label: 'Search Fee', width: 160, height: 50, data: { cost: 2200 } },
+	{ type: 'cost', category: 'translation', label: 'Translation', width: 160, height: 50, data: { cost: 17500 } },
+	{ type: 'cost', category: 'attorney', label: 'Attorney Fees', width: 160, height: 50, data: { cost: 21000 } },
+	{ type: 'cost', category: 'official', label: 'Official Fees', width: 160, height: 50, data: { cost: 3500 } },
+	{ type: 'cost', category: 'search', label: 'Search Fee', width: 160, height: 50, data: { cost: 15000 } },
 	// Custom templates
 	{ type: 'custom', category: 'review', label: 'Internal Review', width: 180, height: 50, data: {} },
 	{ type: 'custom', category: 'approval', label: 'Board Approval', width: 180, height: 50, data: {} },
 	{ type: 'custom', category: 'meeting', label: 'Inventor Meeting', width: 180, height: 50, data: {} },
 	{ type: 'custom', category: 'note', label: 'Note', width: 160, height: 80, data: { text: '' } },
+	// Preparation steps (pre-application)
+	{ type: 'filing', category: 'preliminary-search', label: 'Preliminary Search (option)', width: 180, height: 50, data: { cost: 3500, note: 'Optional preliminary search' } },
+	{ type: 'filing', category: 'write-application', label: 'Write Application', width: 160, height: 50, data: { cost: 14000, note: 'Write patent application' } },
+	// Milestone/Junction blocks - connectable timeline markers
+	{ type: 'milestone', category: 'timeline', label: '12 months', width: 130, height: 46, data: { months: 12 } },
+	{ type: 'milestone', category: 'endpoint', label: 'Max. 20 years', width: 160, height: 46, data: { note: 'Maximum patent lifetime' } },
+	{ type: 'milestone', category: 'timeline', label: '30-31 months', width: 155, height: 46, data: { months: 30 } },
 ];
 
 function generateId(): string {
@@ -77,7 +100,7 @@ function createStrategyStudioStore() {
 
 	// Canvas state
 	let canvasOffset = $state({ x: 0, y: 0 });
-	let canvasZoom = $state(1);
+	let canvasZoom = $state(0.35);
 
 	// Connection drawing state
 	let isDrawingConnection = $state(false);
@@ -371,7 +394,8 @@ function createStrategyStudioStore() {
 						fromPort: connectionStart.port,
 						toPort,
 						label,
-						style: 'solid'
+						style: 'solid',
+						lineType: 'curved'
 					};
 					connections = [...connections, connection];
 					saveToHistory();
@@ -500,7 +524,7 @@ function createStrategyStudioStore() {
 				selectedConnectionId = null;
 				// Reset canvas view to ensure blocks are visible
 				canvasOffset = { x: 0, y: 0 };
-				canvasZoom = 1;
+				canvasZoom = 0.35;
 			}
 		},
 
@@ -508,36 +532,89 @@ function createStrategyStudioStore() {
 			customStrategies = customStrategies.filter(s => s.id !== strategyId);
 		},
 
-		// Load a predefined template (Direct or PCT)
-		loadTemplate(type: 'direct' | 'pct') {
+		// Load the DK+PCT predefined template
+		loadTemplate(type: 'dk-pct') {
 			blocks = [];
 			connections = [];
 			selectedBlockId = null;
 			selectedConnectionId = null;
 
-			if (type === 'direct') {
-				const priority = this.addBlock(BLOCK_TEMPLATES[0], 300, 50);
-				const national = this.addBlock(BLOCK_TEMPLATES[2], 300, 180);
-				const exam = this.addBlock(BLOCK_TEMPLATES[3], 300, 310);
-				const grant = this.addBlock(BLOCK_TEMPLATES[4], 300, 440);
+			if (type === 'dk-pct') {
+				// Danish Priority + PCT Strategy (based on Danish patent filing diagram)
+				// This creates two parallel paths: Danish national path and PCT international path
+				// Includes preparation steps and milestone junction points for branching
+				// Layout optimized for visibility with generous spacing between blocks
+
+				// === PREPARATION STEPS ===
+				// Preliminary Search (optional) - connects from top of DK Application
+				const prelimSearch = this.addBlock(BLOCK_TEMPLATES[26], 320, 20);
+				// Write Application - connects from left side of DK Application
+				const writeApp = this.addBlock(BLOCK_TEMPLATES[27], 80, 165);
+
+				// === TOP ROW: Danish National Path (y=160) ===
+				// DK Application (Priority Date) - 0 months
+				const dkApp = this.addBlock(BLOCK_TEMPLATES[6], 320, 160);
+				// Novelty Search - 7-9 months
+				const noveltySearch = this.addBlock(BLOCK_TEMPLATES[7], 560, 160);
+				// 12 months junction milestone - aligned with Danish path
+				const milestone12 = this.addBlock(BLOCK_TEMPLATES[28], 800, 167);
+				// Publication - 18 months
+				const dkPublication = this.addBlock(BLOCK_TEMPLATES[8], 960, 160);
+				// Office Action(s)
+				const officeAction = this.addBlock(BLOCK_TEMPLATES[9], 1200, 160);
+				// DK Patent
+				const dkPatent = this.addBlock(BLOCK_TEMPLATES[10], 1440, 160);
+				// Max 20 years endpoint milestone - aligned with Danish path
+				const maxYears = this.addBlock(BLOCK_TEMPLATES[29], 1680, 167);
+
+				// === BOTTOM ROW: PCT International Path (y=400) ===
+				// PCT Application (filed at 12 months) - centered under milestone12
+				const pctApp = this.addBlock(BLOCK_TEMPLATES[1], 750, 400);
+				// International Search Report - 16 months
+				const pctSearch = this.addBlock(BLOCK_TEMPLATES[11], 1010, 400);
+				// International Publication - 18 months
+				const pctPublication = this.addBlock(BLOCK_TEMPLATES[12], 1250, 400);
+				// Demand (Optional) - 22 months
+				const pctDemand = this.addBlock(BLOCK_TEMPLATES[13], 1490, 400);
+				// PCT Final Report - 28 months
+				const pctReport = this.addBlock(BLOCK_TEMPLATES[14], 1730, 400);
+				// 30-31 months milestone - aligned with PCT path
+				const milestone30 = this.addBlock(BLOCK_TEMPLATES[30], 1970, 407);
+
+				// === NATIONAL PHASE ENTRIES ===
+				const epEntry = this.addBlock(BLOCK_TEMPLATES[15], 2150, 330);
+				const usEntry = this.addBlock(BLOCK_TEMPLATES[16], 2150, 405);
+				const cnEntry = this.addBlock(BLOCK_TEMPLATES[17], 2150, 480);
 
 				connections = [
-					{ id: generateId(), fromBlockId: priority.id, toBlockId: national.id, fromPort: 'bottom', toPort: 'top', label: '12 months', style: 'solid' },
-					{ id: generateId(), fromBlockId: national.id, toBlockId: exam.id, fromPort: 'bottom', toPort: 'top', label: '', style: 'solid' },
-					{ id: generateId(), fromBlockId: exam.id, toBlockId: grant.id, fromPort: 'bottom', toPort: 'top', label: 'If approved', style: 'solid' }
-				];
-			} else {
-				const priority = this.addBlock(BLOCK_TEMPLATES[0], 300, 50);
-				const pct = this.addBlock(BLOCK_TEMPLATES[1], 300, 180);
-				const national = this.addBlock(BLOCK_TEMPLATES[2], 300, 310);
-				const exam = this.addBlock(BLOCK_TEMPLATES[3], 300, 440);
-				const grant = this.addBlock(BLOCK_TEMPLATES[4], 300, 570);
+					// Preparation steps connect directly to DK Application
+					{ id: generateId(), fromBlockId: prelimSearch.id, toBlockId: dkApp.id, fromPort: 'bottom', toPort: 'top', label: '', style: 'dashed', lineType: 'straight' },
+					{ id: generateId(), fromBlockId: writeApp.id, toBlockId: dkApp.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
 
-				connections = [
-					{ id: generateId(), fromBlockId: priority.id, toBlockId: pct.id, fromPort: 'bottom', toPort: 'top', label: '12 months', style: 'solid' },
-					{ id: generateId(), fromBlockId: pct.id, toBlockId: national.id, fromPort: 'bottom', toPort: 'top', label: '30 months', style: 'solid' },
-					{ id: generateId(), fromBlockId: national.id, toBlockId: exam.id, fromPort: 'bottom', toPort: 'top', label: '', style: 'solid' },
-					{ id: generateId(), fromBlockId: exam.id, toBlockId: grant.id, fromPort: 'bottom', toPort: 'top', label: 'If approved', style: 'solid' }
+					// Danish National Path connections
+					{ id: generateId(), fromBlockId: dkApp.id, toBlockId: noveltySearch.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
+					{ id: generateId(), fromBlockId: noveltySearch.id, toBlockId: milestone12.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
+
+					// From 12 mdr. milestone - branches to both paths
+					{ id: generateId(), fromBlockId: milestone12.id, toBlockId: dkPublication.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
+					{ id: generateId(), fromBlockId: milestone12.id, toBlockId: pctApp.id, fromPort: 'bottom', toPort: 'top', label: '', style: 'dashed', lineType: 'straight' },
+
+					// Danish Path continues
+					{ id: generateId(), fromBlockId: dkPublication.id, toBlockId: officeAction.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
+					{ id: generateId(), fromBlockId: officeAction.id, toBlockId: dkPatent.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
+					{ id: generateId(), fromBlockId: dkPatent.id, toBlockId: maxYears.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
+
+					// PCT Path connections
+					{ id: generateId(), fromBlockId: pctApp.id, toBlockId: pctSearch.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
+					{ id: generateId(), fromBlockId: pctSearch.id, toBlockId: pctPublication.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
+					{ id: generateId(), fromBlockId: pctPublication.id, toBlockId: pctDemand.id, fromPort: 'right', toPort: 'left', label: '', style: 'dashed', lineType: 'straight' },
+					{ id: generateId(), fromBlockId: pctDemand.id, toBlockId: pctReport.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
+					{ id: generateId(), fromBlockId: pctReport.id, toBlockId: milestone30.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
+
+					// From 30-31 mdr. milestone to National Phase entries
+					{ id: generateId(), fromBlockId: milestone30.id, toBlockId: epEntry.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
+					{ id: generateId(), fromBlockId: milestone30.id, toBlockId: usEntry.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
+					{ id: generateId(), fromBlockId: milestone30.id, toBlockId: cnEntry.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' }
 				];
 			}
 		},

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { strategyStudioStore, type StudioBlock, type ConnectionPort } from '$lib/stores/strategy-studio.svelte';
-	import { FileText, DollarSign, Puzzle, Link } from '@lucide/svelte';
+	import { FileText, DollarSign, Puzzle, Link, Circle } from '@lucide/svelte';
 	import { scale, fade } from 'svelte/transition';
 	import { backOut } from 'svelte/easing';
 
@@ -13,9 +13,31 @@
 
 	let isDragging = $state(false);
 	let dragOffset = $state({ x: 0, y: 0 });
+	let canvasRect = $state<DOMRect | null>(null);
 
 	const isSelected = $derived(!readonly && strategyStudioStore.selectedBlockId === block.id);
 	const isConnectionSource = $derived(!readonly && strategyStudioStore.connectionStart?.blockId === block.id);
+
+	// Convert screen coordinates to canvas coordinates
+	function screenToCanvas(clientX: number, clientY: number): { x: number; y: number } {
+		const rect = canvasRect;
+		if (!rect) {
+			// Fallback: find canvas element
+			const canvas = document.querySelector('[role="application"]');
+			if (canvas) {
+				const r = canvas.getBoundingClientRect();
+				return {
+					x: (clientX - r.left - strategyStudioStore.canvasOffset.x) / strategyStudioStore.canvasZoom,
+					y: (clientY - r.top - strategyStudioStore.canvasOffset.y) / strategyStudioStore.canvasZoom
+				};
+			}
+			return { x: clientX, y: clientY };
+		}
+		return {
+			x: (clientX - rect.left - strategyStudioStore.canvasOffset.x) / strategyStudioStore.canvasZoom,
+			y: (clientY - rect.top - strategyStudioStore.canvasOffset.y) / strategyStudioStore.canvasZoom
+		};
+	}
 
 	function handleMouseDown(e: MouseEvent) {
 		if (readonly) return; // No interaction in readonly mode
@@ -29,8 +51,16 @@
 			return;
 		}
 
+		// Cache the canvas rect for the drag operation
+		const canvas = document.querySelector('[role="application"]');
+		if (canvas) {
+			canvasRect = canvas.getBoundingClientRect();
+		}
+
 		isDragging = true;
-		dragOffset = { x: e.clientX - block.x, y: e.clientY - block.y };
+		// Convert mouse position to canvas coordinates, then calculate offset from block
+		const mouseCanvas = screenToCanvas(e.clientX, e.clientY);
+		dragOffset = { x: mouseCanvas.x - block.x, y: mouseCanvas.y - block.y };
 		strategyStudioStore.selectBlock(block.id);
 	}
 
@@ -38,8 +68,10 @@
 		if (readonly) return;
 		if (!isDragging) return;
 
-		const newX = (e.clientX - dragOffset.x) / strategyStudioStore.canvasZoom;
-		const newY = (e.clientY - dragOffset.y) / strategyStudioStore.canvasZoom;
+		// Convert mouse position to canvas coordinates
+		const mouseCanvas = screenToCanvas(e.clientX, e.clientY);
+		const newX = mouseCanvas.x - dragOffset.x;
+		const newY = mouseCanvas.y - dragOffset.y;
 		strategyStudioStore.updateBlockPosition(block.id, newX, newY);
 	}
 
@@ -49,6 +81,7 @@
 			strategyStudioStore.finishBlockMove();
 		}
 		isDragging = false;
+		canvasRect = null; // Clear cached rect
 	}
 
 	// Connection handles - need to handle both mousedown and click
@@ -80,6 +113,8 @@
 				return { border: 'border-green-500/50', bg: 'bg-green-500/10', icon: 'text-green-400' };
 			case 'cost':
 				return { border: 'border-blue-500/50', bg: 'bg-blue-500/10', icon: 'text-blue-400' };
+			case 'milestone':
+				return { border: 'border-amber-500/50', bg: 'bg-amber-500/10', icon: 'text-amber-400' };
 			case 'custom':
 				return { border: 'border-purple-500/50', bg: 'bg-purple-500/10', icon: 'text-purple-400' };
 			default:
@@ -90,9 +125,9 @@
 	const colors = $derived(getBlockColors());
 
 	function formatCurrency(amount: number): string {
-		return new Intl.NumberFormat('en-US', {
+		return new Intl.NumberFormat('da-DK', {
 			style: 'currency',
-			currency: 'USD',
+			currency: 'DKK',
 			minimumFractionDigits: 0,
 			maximumFractionDigits: 0
 		}).format(amount);
@@ -118,11 +153,13 @@
 			<FileText class="h-4 w-4 flex-shrink-0 {colors.icon}" />
 		{:else if block.type === 'cost'}
 			<DollarSign class="h-4 w-4 flex-shrink-0 {colors.icon}" />
+		{:else if block.type === 'milestone'}
+			<Circle class="h-4 w-4 flex-shrink-0 {colors.icon}" />
 		{:else}
 			<Puzzle class="h-4 w-4 flex-shrink-0 {colors.icon}" />
 		{/if}
 		<div class="min-w-0 flex-1">
-			<p class="truncate text-sm font-medium text-white">{block.label}</p>
+			<p class="{block.type === 'milestone' ? '' : 'truncate'} text-sm font-medium text-white">{block.label}</p>
 			{#if typeof block.data.cost === 'number' && block.data.cost > 0}
 				<p class="text-xs text-slate-400">{formatCurrency(block.data.cost)}</p>
 			{/if}

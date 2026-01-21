@@ -45,14 +45,6 @@
 		strategyStudioStore.clearCanvas();
 	}
 
-	function handleLoadDirect() {
-		strategyStudioStore.loadTemplate('direct');
-	}
-
-	function handleLoadPCT() {
-		strategyStudioStore.loadTemplate('pct');
-	}
-
 	const hasBlocks = $derived(strategyStudioStore.blocks.length > 0);
 	const selectedBlock = $derived(strategyStudioStore.selectedBlock);
 	const selectedConnection = $derived(strategyStudioStore.selectedConnection);
@@ -239,30 +231,6 @@
 	<div class="flex flex-1 overflow-hidden">
 		<!-- Left Palette -->
 		<aside class="w-64 flex-shrink-0 overflow-y-auto border-r border-white/10 bg-slate-900/50 p-4">
-			<div class="mb-4">
-				<h3 class="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
-					Templates
-				</h3>
-				<div class="flex gap-2">
-					<Button
-						size="sm"
-						variant="outline"
-						onclick={handleLoadDirect}
-						class="flex-1 border-white/20 text-xs text-slate-300 hover:bg-white/10"
-					>
-						Direct
-					</Button>
-					<Button
-						size="sm"
-						variant="outline"
-						onclick={handleLoadPCT}
-						class="flex-1 border-white/20 text-xs text-slate-300 hover:bg-white/10"
-					>
-						PCT
-					</Button>
-				</div>
-			</div>
-
 			<!-- Filing Steps -->
 			<div class="mb-4">
 				<h3 class="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">

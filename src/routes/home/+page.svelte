@@ -40,10 +40,8 @@
 	$effect(() => {
 		const strategy = filingStrategy;
 		if (strategy !== null && strategy !== lastLoadedStrategy) {
-			if (strategy === 'direct') {
-				strategyStudioStore.loadTemplate('direct');
-			} else if (strategy === 'pct') {
-				strategyStudioStore.loadTemplate('pct');
+			if (strategy === 'dk-pct') {
+				strategyStudioStore.loadTemplate('dk-pct');
 			} else if (strategy.startsWith('custom-')) {
 				const customId = strategy.replace('custom-', '');
 				strategyStudioStore.loadStrategy(customId);

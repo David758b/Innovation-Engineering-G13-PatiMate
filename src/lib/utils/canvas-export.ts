@@ -73,10 +73,11 @@ function generateSVG(): string {
 
 	// Blocks
 	for (const block of blocks) {
-		const colors = {
+		const colors: Record<string, { border: string; bg: string }> = {
 			filing: { border: '#22c55e', bg: 'rgba(34, 197, 94, 0.1)' },
 			cost: { border: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
-			custom: { border: '#a855f7', bg: 'rgba(168, 85, 247, 0.1)' }
+			custom: { border: '#a855f7', bg: 'rgba(168, 85, 247, 0.1)' },
+			milestone: { border: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' }
 		};
 		const color = colors[block.type] || colors.custom;
 
