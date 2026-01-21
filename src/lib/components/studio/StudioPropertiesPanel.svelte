@@ -136,13 +136,6 @@
 				</div>
 			{/if}
 
-			<!-- Position info -->
-			<div class="rounded-md border border-white/10 bg-white/5 p-2">
-				<p class="text-xs text-slate-500">
-					Position: ({Math.round(selectedBlock.x)}, {Math.round(selectedBlock.y)})
-				</p>
-			</div>
-
 			<!-- Delete button -->
 			<Button
 				variant="destructive"
