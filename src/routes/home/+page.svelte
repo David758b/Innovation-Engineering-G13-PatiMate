@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import CostBreakdownTable from '$lib/components/calculator/CostBreakdownTable.svelte';
 	import CostSummaryCard from '$lib/components/calculator/CostSummaryCard.svelte';
@@ -12,6 +13,7 @@
 	import StudioMiniMap from '$lib/components/studio/StudioMiniMap.svelte';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
 	import { strategyStudioStore } from '$lib/stores/strategy-studio.svelte';
+	import { Gamepad2 } from '@lucide/svelte';
 
 	let showStrategyStudio = $state(false);
 	let lastLoadedStrategy = $state<string | null>(null);
@@ -60,7 +62,18 @@
 			<a href="/">
 				<Logo size="sm" />
 			</a>
-			<SettingsModal />
+			<div class="flex items-center gap-2">
+				<Button
+					variant="outline"
+					size="sm"
+					onclick={() => goto('/game')}
+					class="border-purple-500/50 text-purple-400 hover:bg-purple-500/10 hover:text-purple-300"
+				>
+					<Gamepad2 class="mr-2 h-4 w-4" />
+					Patent Rush
+				</Button>
+				<SettingsModal />
+			</div>
 		</header>
 
 		<!-- Main Content -->
