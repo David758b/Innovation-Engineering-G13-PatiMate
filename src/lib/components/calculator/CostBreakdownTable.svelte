@@ -1,15 +1,11 @@
 <script lang="ts">
 	import * as Table from '$lib/components/ui/table';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
+	import { currencyStore } from '$lib/stores/currency.svelte';
 
-	// Format currency
+	// Format currency using the store
 	function formatCurrency(amount: number): string {
-		return new Intl.NumberFormat('en-US', {
-			style: 'currency',
-			currency: 'USD',
-			minimumFractionDigits: 0,
-			maximumFractionDigits: 0
-		}).format(amount);
+		return currencyStore.format(amount);
 	}
 
 	const selectedCount = $derived(calculatorStore.input.countries.length);

@@ -2,14 +2,13 @@
 	import * as Collapsible from '$lib/components/ui/collapsible';
 	import { Label } from '$lib/components/ui/label';
 	import * as RadioGroup from '$lib/components/ui/radio-group';
-	import type { FilingStrategy } from '$lib/data/types';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
 	import { strategyStudioStore } from '$lib/stores/strategy-studio.svelte';
 	import { ChevronDown, ChevronUp, Sparkles } from '@lucide/svelte';
 
 	let isExpanded = $state(false);
 
-	const FILING_STRATEGIES: { value: FilingStrategy; label: string; description: string }[] = [
+	const FILING_STRATEGIES: { value: 'direct' | 'pct'; label: string; description: string }[] = [
 		{
 			value: 'direct',
 			label: 'Direct National Filing',
@@ -26,7 +25,7 @@
 	const customStrategies = $derived(strategyStudioStore.customStrategies);
 
 	function handleStrategyChange(value: string) {
-		calculatorStore.setFilingStrategy(value as FilingStrategy);
+		calculatorStore.setFilingStrategy(value);
 	}
 </script>
 

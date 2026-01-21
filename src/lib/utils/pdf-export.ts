@@ -2,6 +2,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import type { CalculationSummary } from '$lib/stores/calculator.svelte';
 import type { CalculationInput } from '$lib/data/types';
+import { currencyStore } from '$lib/stores/currency.svelte';
 
 // Extend jsPDF type to include autoTable
 declare module 'jspdf' {
@@ -10,14 +11,9 @@ declare module 'jspdf' {
 	}
 }
 
-// Format currency consistently
+// Format currency using the currency store
 function formatCurrency(amount: number): string {
-	return new Intl.NumberFormat('en-US', {
-		style: 'currency',
-		currency: 'USD',
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 0
-	}).format(amount);
+	return currencyStore.format(amount);
 }
 
 // Format date for the report
@@ -113,7 +109,8 @@ export function exportToPDF(result: CalculationSummary, input: CalculationInput)
 	yPos += 7;
 	doc.setFontSize(10);
 	doc.setTextColor(148, 163, 184); // Lighter slate
-	doc.text(`Generated on ${formatDate()}`, pageCenter, yPos, { align: 'center' });
+	const currencyLabel = `${currencyStore.selectedCurrencyInfo.name} (${currencyStore.selectedCurrency})`;
+	doc.text(`Generated on ${formatDate()} | Currency: ${currencyLabel}`, pageCenter, yPos, { align: 'center' });
 
 	// Horizontal divider line
 	yPos += 8;
@@ -133,12 +130,16 @@ export function exportToPDF(result: CalculationSummary, input: CalculationInput)
 	doc.setFont('helvetica', 'normal');
 	doc.setTextColor(71, 85, 105); // Slate 600
 
+	const filingStrategyLabel = input.filingStrategy
+		? (FILING_STRATEGY_LABELS[input.filingStrategy] || input.filingStrategy)
+		: 'Not Selected';
+
 	const params = [
 		['Countries:', `${result.countryCount} selected`],
 		['Claims:', `${input.claims}`],
 		['Pages:', `${input.pages}`],
 		['Technology:', TECH_FIELD_LABELS[input.technologyField] || input.technologyField],
-		['Filing Strategy:', FILING_STRATEGY_LABELS[input.filingStrategy] || input.filingStrategy],
+		['Filing Strategy:', filingStrategyLabel],
 		['Maintenance:', `${result.maintenancePeriod} years`]
 	];
 

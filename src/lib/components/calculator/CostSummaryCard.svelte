@@ -1,12 +1,20 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
+	import * as Select from '$lib/components/ui/select';
 	import { Button } from '$lib/components/ui/button';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
+	import { currencyStore, SUPPORTED_CURRENCIES } from '$lib/stores/currency.svelte';
 	import { exportToPDF } from '$lib/utils/pdf-export';
-	import { Download } from '@lucide/svelte';
+	import { Download, RefreshCw } from '@lucide/svelte';
+	import { onMount } from 'svelte';
 
 	const selectedCount = $derived(calculatorStore.input.countries.length);
 	const result = $derived(calculatorStore.calculationResult);
+
+	// Fetch exchange rates on mount
+	onMount(() => {
+		currencyStore.fetchRates();
+	});
 
 	function handleExportPDF() {
 		if (result) {
@@ -14,19 +22,57 @@
 		}
 	}
 
-	// Format currency
+	function handleCurrencyChange(value: string | undefined) {
+		if (value) {
+			currencyStore.setSelectedCurrency(value);
+		}
+	}
+
+	// Format currency using the store
 	function formatCurrency(amount: number): string {
-		return new Intl.NumberFormat('en-US', {
-			style: 'currency',
-			currency: 'USD',
-			minimumFractionDigits: 0,
-			maximumFractionDigits: 0
-		}).format(amount);
+		return currencyStore.format(amount);
 	}
 </script>
 
 <Card.Root class="border-white/10 bg-gradient-to-br from-slate-800/80 to-slate-900/80">
 	<Card.Content class="p-6">
+		<!-- Currency Selector - Always visible -->
+		<div class="mb-4 flex items-center justify-end gap-2">
+			<Select.Root
+				type="single"
+				value={currencyStore.selectedCurrency}
+				onValueChange={handleCurrencyChange}
+			>
+				<Select.Trigger
+					class="h-8 w-[140px] border-white/10 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50"
+					size="sm"
+				>
+					<span class="flex items-center gap-2">
+						<span>{currencyStore.selectedCurrencyInfo.flag}</span>
+						<span>{currencyStore.selectedCurrency}</span>
+					</span>
+				</Select.Trigger>
+				<Select.Content class="border-white/10 bg-slate-800">
+					{#each SUPPORTED_CURRENCIES as currency}
+						<Select.Item
+							value={currency.code}
+							label={currency.name}
+							class="text-slate-300 hover:bg-slate-700 focus:bg-slate-700"
+						>
+							<span class="flex items-center gap-2">
+								<span>{currency.flag}</span>
+								<span>{currency.code}</span>
+								<span class="text-slate-500">- {currency.name}</span>
+							</span>
+						</Select.Item>
+					{/each}
+				</Select.Content>
+			</Select.Root>
+			{#if currencyStore.isLoading}
+				<RefreshCw class="h-4 w-4 animate-spin text-slate-500" />
+			{/if}
+		</div>
+
 		<!-- Empty State -->
 		{#if selectedCount === 0}
 			<div class="py-8 text-center">
