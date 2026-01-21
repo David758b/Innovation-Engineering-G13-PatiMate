@@ -63,15 +63,6 @@
 				<Logo size="sm" />
 			</a>
 			<div class="flex items-center gap-2">
-				<Button
-					variant="outline"
-					size="sm"
-					onclick={() => goto('/game')}
-					class="border-purple-500/50 text-purple-400 hover:bg-purple-500/10 hover:text-purple-300"
-				>
-					<Gamepad2 class="mr-2 h-4 w-4" />
-					Patent Rush
-				</Button>
 				<SettingsModal />
 			</div>
 		</header>

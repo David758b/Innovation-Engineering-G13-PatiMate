@@ -27,7 +27,7 @@
 			<p
 				class="mt-3 text-center text-base text-slate-400 sm:text-lg lg:mt-4 lg:text-left lg:text-xl"
 			>
-				Calculate costs across 190+ countries in seconds
+				Calculate costs across multiple countries with ease
 			</p>
 
 			<!-- CTA Button -->
