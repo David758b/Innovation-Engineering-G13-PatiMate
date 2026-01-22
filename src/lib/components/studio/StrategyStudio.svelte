@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
+	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import { strategyStudioStore, BLOCK_TEMPLATES, type StudioBlock } from '$lib/stores/strategy-studio.svelte';
 	import { ArrowLeft, Plus, Save, Trash2, FileText, DollarSign, Puzzle, GripVertical, Undo2, Redo2, Grid3x3, LayoutGrid, Download, Image, FileType, FileDown, ChevronDown, X, Eye, Pencil } from '@lucide/svelte';
 	import StudioCanvas from './StudioCanvas.svelte';
@@ -79,7 +80,7 @@
 	}
 </script>
 
-<div class="flex min-h-screen flex-col bg-slate-950">
+<div class="flex h-screen flex-col overflow-hidden bg-slate-950">
 	<!-- Header with breadcrumb -->
 	<header class="flex items-center justify-between border-b border-white/10 px-4 py-3">
 		<div class="flex items-center gap-3">
@@ -230,101 +231,105 @@
 	<!-- Main content -->
 	<div class="flex flex-1 overflow-hidden">
 		<!-- Left Palette -->
-		<aside class="w-64 flex-shrink-0 overflow-y-auto border-r border-white/10 bg-slate-900/50 p-4">
-			<!-- Filing Steps -->
-			<div class="mb-4">
-				<h3 class="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
-					<FileText class="h-3 w-3" />
-					Filing Steps
-				</h3>
-				<div class="space-y-1">
-					{#each filingBlocks as template}
-						<!-- svelte-ignore a11y_no_static_element_interactions -->
-						<div
-							draggable="true"
-							ondragstart={() => handleDragStart(template)}
-							ondragend={handleDragEnd}
-							class="flex cursor-grab items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300 transition-colors hover:border-green-500/50 hover:bg-green-500/10 active:cursor-grabbing"
-						>
-							<GripVertical class="h-3 w-3 text-slate-600" />
-							<span>{template.label}</span>
-						</div>
-					{/each}
-				</div>
-			</div>
-
-			<!-- Cost Items -->
-			<div class="mb-4">
-				<h3 class="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
-					<DollarSign class="h-3 w-3" />
-					Cost Items
-				</h3>
-				<div class="space-y-1">
-					{#each costBlocks as template}
-						<!-- svelte-ignore a11y_no_static_element_interactions -->
-						<div
-							draggable="true"
-							ondragstart={() => handleDragStart(template)}
-							ondragend={handleDragEnd}
-							class="flex cursor-grab items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300 transition-colors hover:border-blue-500/50 hover:bg-blue-500/10 active:cursor-grabbing"
-						>
-							<GripVertical class="h-3 w-3 text-slate-600" />
-							<span>{template.label}</span>
-						</div>
-					{/each}
-				</div>
-			</div>
-
-			<!-- Custom Blocks -->
-			<div class="mb-4">
-				<h3 class="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
-					<Puzzle class="h-3 w-3" />
-					Custom
-				</h3>
-				<div class="space-y-1">
-					{#each customBlocks as template}
-						<!-- svelte-ignore a11y_no_static_element_interactions -->
-						<div
-							draggable="true"
-							ondragstart={() => handleDragStart(template)}
-							ondragend={handleDragEnd}
-							class="flex cursor-grab items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300 transition-colors hover:border-purple-500/50 hover:bg-purple-500/10 active:cursor-grabbing"
-						>
-							<GripVertical class="h-3 w-3 text-slate-600" />
-							<span>{template.label}</span>
-						</div>
-					{/each}
-				</div>
-			</div>
-
-			<!-- Saved Strategies -->
-			{#if strategyStudioStore.customStrategies.length > 0}
-				<div>
-					<h3 class="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
-						Saved Strategies
-					</h3>
-					<div class="space-y-1">
-						{#each strategyStudioStore.customStrategies as strategy}
-							{@const isCurrentPreview = strategyStudioStore.previewingStrategyId === strategy.id}
-							<div class="flex items-center justify-between rounded-md border px-3 py-2 transition-colors {isCurrentPreview ? 'border-blue-500/50 bg-blue-500/10' : 'border-white/10 bg-white/5 hover:border-white/20'}">
-								<button
-									onclick={() => strategyStudioStore.previewStrategy(strategy.id)}
-									class="flex items-center gap-2 text-sm {isCurrentPreview ? 'text-blue-400' : 'text-slate-300 hover:text-white'}"
+		<aside class="w-64 flex-shrink-0 border-r border-white/10 bg-slate-900/50">
+			<ScrollArea class="h-full" orientation="vertical">
+				<div class="p-4">
+					<!-- Filing Steps -->
+					<div class="mb-4">
+						<h3 class="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+							<FileText class="h-3 w-3" />
+							Filing Steps
+						</h3>
+						<div class="space-y-1">
+							{#each filingBlocks as template}
+								<!-- svelte-ignore a11y_no_static_element_interactions -->
+								<div
+									draggable="true"
+									ondragstart={() => handleDragStart(template)}
+									ondragend={handleDragEnd}
+									class="flex cursor-grab items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300 transition-colors hover:border-green-500/50 hover:bg-green-500/10 active:cursor-grabbing"
 								>
-									<Eye class="h-3 w-3" />
-									{strategy.name}
-								</button>
-								<button
-									onclick={() => strategyStudioStore.deleteStrategy(strategy.id)}
-									class="text-slate-500 hover:text-red-400"
-								>
-									<Trash2 class="h-3 w-3" />
-								</button>
-							</div>
-						{/each}
+									<GripVertical class="h-3 w-3 text-slate-600" />
+									<span>{template.label}</span>
+								</div>
+							{/each}
+						</div>
 					</div>
+
+					<!-- Cost Items -->
+					<div class="mb-4">
+						<h3 class="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+							<DollarSign class="h-3 w-3" />
+							Cost Items
+						</h3>
+						<div class="space-y-1">
+							{#each costBlocks as template}
+								<!-- svelte-ignore a11y_no_static_element_interactions -->
+								<div
+									draggable="true"
+									ondragstart={() => handleDragStart(template)}
+									ondragend={handleDragEnd}
+									class="flex cursor-grab items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300 transition-colors hover:border-blue-500/50 hover:bg-blue-500/10 active:cursor-grabbing"
+								>
+									<GripVertical class="h-3 w-3 text-slate-600" />
+									<span>{template.label}</span>
+								</div>
+							{/each}
+						</div>
+					</div>
+
+					<!-- Custom Blocks -->
+					<div class="mb-4">
+						<h3 class="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+							<Puzzle class="h-3 w-3" />
+							Custom
+						</h3>
+						<div class="space-y-1">
+							{#each customBlocks as template}
+								<!-- svelte-ignore a11y_no_static_element_interactions -->
+								<div
+									draggable="true"
+									ondragstart={() => handleDragStart(template)}
+									ondragend={handleDragEnd}
+									class="flex cursor-grab items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300 transition-colors hover:border-purple-500/50 hover:bg-purple-500/10 active:cursor-grabbing"
+								>
+									<GripVertical class="h-3 w-3 text-slate-600" />
+									<span>{template.label}</span>
+								</div>
+							{/each}
+						</div>
+					</div>
+
+					<!-- Saved Strategies -->
+					{#if strategyStudioStore.customStrategies.length > 0}
+						<div>
+							<h3 class="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+								Saved Strategies
+							</h3>
+							<div class="space-y-1">
+								{#each strategyStudioStore.customStrategies as strategy}
+									{@const isCurrentPreview = strategyStudioStore.previewingStrategyId === strategy.id}
+									<div class="flex items-center justify-between rounded-md border px-3 py-2 transition-colors {isCurrentPreview ? 'border-blue-500/50 bg-blue-500/10' : 'border-white/10 bg-white/5 hover:border-white/20'}">
+										<button
+											onclick={() => strategyStudioStore.previewStrategy(strategy.id)}
+											class="flex items-center gap-2 text-sm {isCurrentPreview ? 'text-blue-400' : 'text-slate-300 hover:text-white'}"
+										>
+											<Eye class="h-3 w-3" />
+											{strategy.name}
+										</button>
+										<button
+											onclick={() => strategyStudioStore.deleteStrategy(strategy.id)}
+											class="text-slate-500 hover:text-red-400"
+										>
+											<Trash2 class="h-3 w-3" />
+										</button>
+									</div>
+								{/each}
+							</div>
+						</div>
+					{/if}
 				</div>
-			{/if}
+			</ScrollArea>
 		</aside>
 
 		<!-- Canvas -->
