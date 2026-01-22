@@ -5,20 +5,20 @@ export interface CurrencyInfo {
 	code: string;
 	name: string;
 	symbol: string;
-	flag: string;
+	countryCode: string; // ISO country code for flag display
 }
 
 // Supported currencies (curated list)
 export const SUPPORTED_CURRENCIES: CurrencyInfo[] = [
-	{ code: 'DKK', name: 'Danish Krone', symbol: 'kr', flag: '🇩🇰' },
-	{ code: 'EUR', name: 'Euro', symbol: '€', flag: '🇪🇺' },
-	{ code: 'USD', name: 'US Dollar', symbol: '$', flag: '🇺🇸' },
-	{ code: 'GBP', name: 'British Pound', symbol: '£', flag: '🇬🇧' },
-	{ code: 'SEK', name: 'Swedish Krona', symbol: 'kr', flag: '🇸🇪' },
-	{ code: 'NOK', name: 'Norwegian Krone', symbol: 'kr', flag: '🇳🇴' },
-	{ code: 'CHF', name: 'Swiss Franc', symbol: 'CHF', flag: '🇨🇭' },
-	{ code: 'JPY', name: 'Japanese Yen', symbol: '¥', flag: '🇯🇵' },
-	{ code: 'CNY', name: 'Chinese Yuan', symbol: '¥', flag: '🇨🇳' }
+	{ code: 'DKK', name: 'Danish Krone', symbol: 'kr', countryCode: 'DK' },
+	{ code: 'EUR', name: 'Euro', symbol: '€', countryCode: 'EU' },
+	{ code: 'USD', name: 'US Dollar', symbol: '$', countryCode: 'US' },
+	{ code: 'GBP', name: 'British Pound', symbol: '£', countryCode: 'GB' },
+	{ code: 'SEK', name: 'Swedish Krona', symbol: 'kr', countryCode: 'SE' },
+	{ code: 'NOK', name: 'Norwegian Krone', symbol: 'kr', countryCode: 'NO' },
+	{ code: 'CHF', name: 'Swiss Franc', symbol: 'CHF', countryCode: 'CH' },
+	{ code: 'JPY', name: 'Japanese Yen', symbol: '¥', countryCode: 'JP' },
+	{ code: 'CNY', name: 'Chinese Yuan', symbol: '¥', countryCode: 'CN' }
 ];
 
 // Cache configuration

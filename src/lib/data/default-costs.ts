@@ -65,6 +65,22 @@ export const DEFAULT_COUNTRY_COSTS: Record<string, CountryCosts> = {
 		maintenanceFeesAnnual: 600,
 		requiresTranslation: false
 	},
+	DK: {
+		countryCode: 'DK',
+		name: 'Denmark',
+		flag: '🇩🇰',
+		region: 'Europe',
+		officialFees: {
+			filing: 500,
+			search: 0,
+			examination: 700,
+			grant: 300
+		},
+		foreignAttorneyFee: 5000,
+		translationCostPerPage: 45,
+		maintenanceFeesAnnual: 200,
+		requiresTranslation: true
+	},
 
 	// Asia-Pacific
 	CN: {

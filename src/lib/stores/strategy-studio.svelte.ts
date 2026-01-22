@@ -1,5 +1,9 @@
 // Strategy Studio Store - manages blocks, connections, and custom strategies
 
+// Countries that appear in the selector but don't create separate strategy entries
+// (e.g., Denmark is typically filed via EP validation, not as a separate national entry)
+export const DISPLAY_ONLY_COUNTRIES = ['DK'];
+
 export type BlockType = 'filing' | 'cost' | 'custom' | 'milestone';
 export type ConnectionPort = 'top' | 'bottom' | 'left' | 'right';
 
@@ -729,10 +733,12 @@ function createStrategyStudioStore() {
 
 		// Sync countries: add/remove entry blocks to match the provided country list
 		syncCountries(countryCodes: string[]) {
+			// Filter out display-only countries (they appear selected but don't create entries)
+			const entryCountries = countryCodes.filter(code => !DISPLAY_ONLY_COUNTRIES.includes(code));
 			const currentCountries = this.getCountriesFromBlocks();
 
 			// Add new countries
-			for (const code of countryCodes) {
+			for (const code of entryCountries) {
 				if (!currentCountries.includes(code)) {
 					this.addNationalEntry(code);
 				}
@@ -740,7 +746,7 @@ function createStrategyStudioStore() {
 
 			// Remove countries no longer in list
 			for (const code of currentCountries) {
-				if (!countryCodes.includes(code)) {
+				if (!entryCountries.includes(code)) {
 					this.removeNationalEntry(code);
 				}
 			}

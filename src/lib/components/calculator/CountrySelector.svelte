@@ -3,6 +3,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Collapsible from '$lib/components/ui/collapsible';
 	import { Checkbox } from '$lib/components/ui/checkbox';
+	import { Flag } from '$lib/components/ui/flag';
 	import { Input } from '$lib/components/ui/input';
 	import { COUNTRIES, COUNTRY_PRESETS, REGIONS, getCountriesByRegion } from '$lib/data/countries';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
@@ -106,7 +107,7 @@
 							variant="secondary"
 							class="flex items-center gap-1 bg-slate-700 pr-1 text-slate-200"
 						>
-							<span>{country.flag}</span>
+							<Flag code={country.code} size="sm" />
 							<span>{country.name}</span>
 							<button
 								onclick={() => calculatorStore.removeCountry(code)}
@@ -152,7 +153,7 @@
 										onCheckedChange={() => toggleCountry(country.code)}
 										class="border-white/30 data-[state=checked]:bg-green-500 data-[state=checked]:text-slate-900"
 									/>
-									<span class="text-lg">{country.flag}</span>
+									<Flag code={country.code} size="lg" />
 									<span class="text-sm text-slate-300">{country.name}</span>
 								</label>
 							{/each}

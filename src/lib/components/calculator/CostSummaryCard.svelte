@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
+	import { Flag } from '$lib/components/ui/flag';
 	import * as Select from '$lib/components/ui/select';
 	import { Button } from '$lib/components/ui/button';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
@@ -50,7 +51,7 @@
 					size="sm"
 				>
 					<span class="flex items-center gap-2">
-						<span>{currencyStore.selectedCurrencyInfo.flag}</span>
+						<Flag code={currencyStore.selectedCurrencyInfo.countryCode} size="sm" />
 						<span>{currencyStore.selectedCurrency}</span>
 					</span>
 				</Select.Trigger>
@@ -62,7 +63,7 @@
 							class="text-slate-300 hover:bg-slate-700 focus:bg-slate-700"
 						>
 							<span class="flex items-center gap-2">
-								<span>{currency.flag}</span>
+								<Flag code={currency.countryCode} size="sm" />
 								<span>{currency.code}</span>
 								<span class="text-slate-500">- {currency.name}</span>
 							</span>

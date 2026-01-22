@@ -1,7 +1,7 @@
 import { COUNTRIES } from '$lib/data/countries';
 import { DEFAULT_COUNTRY_COSTS, DEFAULT_GLOBAL_SETTINGS } from '$lib/data/default-costs';
 import type { CalculationInput, MaintenancePeriod, UserConfig } from '$lib/data/types';
-import { strategyStudioStore, getCountryCodeFromBlock, isNationalEntryBlock } from '$lib/stores/strategy-studio.svelte';
+import { strategyStudioStore, getCountryCodeFromBlock, isNationalEntryBlock, DISPLAY_ONLY_COUNTRIES } from '$lib/stores/strategy-studio.svelte';
 
 // Filing step result (from strategy blocks)
 export interface FilingStepResult {
@@ -150,8 +150,18 @@ function createCalculatorStore() {
 			let totalTranslationCosts = 0;
 			let totalMaintenanceFees = 0;
 
-			for (const block of entryBlocks) {
-				const countryCode = getCountryCodeFromBlock(block);
+			// Get country codes from entry blocks
+			const blockCountryCodes = entryBlocks
+				.map(getCountryCodeFromBlock)
+				.filter((code): code is string => code !== null);
+
+			// Always include display-only countries in the breakdown (proof of concept)
+			const displayOnlySelected = DISPLAY_ONLY_COUNTRIES;
+
+			// Combine both lists (blocks + display-only)
+			const allCountryCodes = [...blockCountryCodes, ...displayOnlySelected];
+
+			for (const countryCode of allCountryCodes) {
 				if (!countryCode) continue;
 
 				const country = COUNTRIES.find((c) => c.code === countryCode);

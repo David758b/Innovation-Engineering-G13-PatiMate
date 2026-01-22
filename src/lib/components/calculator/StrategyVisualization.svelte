@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Flag } from '$lib/components/ui/flag';
 	import * as Select from '$lib/components/ui/select';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
 	import { COUNTRIES } from '$lib/data/countries';
@@ -236,7 +237,7 @@
 					<Select.Trigger class="w-48 border-white/20 bg-white/5 text-white">
 						{#if selectedCountry}
 							<span class="flex items-center gap-2">
-								<span>{selectedCountry.flag}</span>
+								<Flag code={selectedCountry.code} />
 								<span>{selectedCountry.name}</span>
 							</span>
 						{:else}
@@ -247,7 +248,7 @@
 						{#each selectedCountries as country}
 							<Select.Item value={country.code} class="text-slate-300 hover:bg-slate-700">
 								<span class="flex items-center gap-2">
-									<span>{country.flag}</span>
+									<Flag code={country.code} />
 									<span>{country.name}</span>
 								</span>
 							</Select.Item>

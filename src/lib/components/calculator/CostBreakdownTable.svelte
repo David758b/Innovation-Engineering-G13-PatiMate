@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Flag } from '$lib/components/ui/flag';
 	import * as Table from '$lib/components/ui/table';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
 	import { currencyStore } from '$lib/stores/currency.svelte';
@@ -41,7 +42,7 @@
 					<Table.Row class="border-white/10 hover:bg-white/5">
 						<Table.Cell>
 							<div class="flex items-center gap-2">
-								<span class="text-lg">{country.flag}</span>
+								<Flag code={country.code} size="lg" />
 								<span class="text-slate-200">{country.name}</span>
 							</div>
 						</Table.Cell>

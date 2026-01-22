@@ -27,6 +27,7 @@ export const COUNTRIES: Country[] = [
 
 	// Europe
 	{ code: 'EP', name: 'European Patent Office', flag: '🇪🇺', region: 'Europe' },
+	{ code: 'DK', name: 'Denmark', flag: '🇩🇰', region: 'Europe' },
 
 	// Asia-Pacific
 	{ code: 'CN', name: 'China', flag: '🇨🇳', region: 'Asia-Pacific' },
@@ -53,7 +54,7 @@ export const COUNTRY_PRESETS: CountryPreset[] = [
 	{
 		id: 'all-countries',
 		name: 'All Countries',
-		countries: ['US', 'CA', 'EP', 'CN', 'JP', 'KR', 'IN', 'AU', 'NZ', 'BR', 'ZA']
+		countries: ['US', 'CA', 'EP', 'DK', 'CN', 'JP', 'KR', 'IN', 'AU', 'NZ', 'BR', 'ZA']
 	},
 	{
 		id: 'asia-pacific',

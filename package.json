@@ -41,6 +41,7 @@
 		]
 	},
 	"dependencies": {
+		"flag-icons": "^7.5.0",
 		"globe.gl": "^2.45.0",
 		"jspdf": "^4.0.0",
 		"jspdf-autotable": "^5.0.7"

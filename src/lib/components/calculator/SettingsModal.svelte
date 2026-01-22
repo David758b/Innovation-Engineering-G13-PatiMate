@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog';
+	import { Flag } from '$lib/components/ui/flag';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
@@ -228,7 +229,9 @@
 						<Select.Root type="single" value={selectedCountryCode} onValueChange={handleCountryChange}>
 							<Select.Trigger class="mt-1 w-full border-white/20 bg-white/5 text-white">
 								<span class="flex items-center gap-2">
-									<span>{selectedCountry?.flag}</span>
+									{#if selectedCountry}
+										<Flag code={selectedCountry.code} />
+									{/if}
 									<span>{selectedCountry?.name}</span>
 								</span>
 							</Select.Trigger>
@@ -236,7 +239,7 @@
 								{#each COUNTRIES as country}
 									<Select.Item value={country.code} class="text-slate-300 hover:bg-slate-700">
 										<span class="flex items-center gap-2">
-											<span>{country.flag}</span>
+											<Flag code={country.code} />
 											<span>{country.name}</span>
 										</span>
 									</Select.Item>
