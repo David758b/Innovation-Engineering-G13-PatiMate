@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import CostBreakdownTable from '$lib/components/calculator/CostBreakdownTable.svelte';
 	import CostSummaryCard from '$lib/components/calculator/CostSummaryCard.svelte';
 	import CountrySelector from '$lib/components/calculator/CountrySelector.svelte';
@@ -73,6 +74,9 @@
 
 	// Load the appropriate strategy into the canvas when filing strategy changes
 	$effect(() => {
+		// Don't run while Strategy Studio is open
+		if (showStrategyStudio) return;
+
 		const strategy = filingStrategy;
 		if (strategy !== null && strategy !== lastLoadedStrategy) {
 			// Remember user's current country selection before loading template
@@ -104,7 +108,7 @@
 
 	// Sync: Strategy blocks → Calculator countries
 	$effect(() => {
-		if (isSyncing || !hasStrategySelected) return;
+		if (showStrategyStudio || isSyncing || !hasStrategySelected) return;
 
 		const currentStrategyCountries = strategyCountries;
 		const prevStrategyCountries = lastSyncedFromStrategy;
@@ -125,7 +129,7 @@
 
 	// Sync: Calculator countries → Strategy blocks
 	$effect(() => {
-		if (isSyncing || !hasStrategySelected) return;
+		if (showStrategyStudio || isSyncing || !hasStrategySelected) return;
 
 		const currentCalcCountries = calculatorCountries;
 		const prevCalcCountries = lastSyncedFromCalculator;
@@ -148,9 +152,9 @@
 {#if showStrategyStudio}
 	<StrategyStudio onBack={handleCloseStudio} />
 {:else}
-	<div class="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100">
+	<div class="flex h-screen flex-col overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100">
 		<!-- Header -->
-		<header class="flex items-center justify-between border-b border-white/10 px-4 py-4 lg:px-8">
+		<header class="flex flex-shrink-0 items-center justify-between border-b border-white/10 px-4 py-4 lg:px-8">
 			<a href="/">
 				<Logo size="sm" />
 			</a>
@@ -160,55 +164,61 @@
 		</header>
 
 		<!-- Main Content -->
-		<main class="flex flex-col lg:flex-row">
+		<main class="flex flex-1 flex-col overflow-hidden lg:flex-row">
 			<!-- Input Panel (Left) -->
-			<aside
-				class="w-full space-y-4 border-b border-white/10 p-4 lg:w-[35%] lg:border-r lg:border-b-0 lg:p-6"
-			>
-				<h1 class="text-xl font-bold text-white lg:text-2xl">Patent Cost Calculator</h1>
-				<p class="text-sm text-slate-400">Estimate patent filing costs across multiple countries</p>
+			<aside class="w-full border-b border-white/10 lg:w-[35%] lg:border-r lg:border-b-0">
+				<ScrollArea class="h-full" orientation="vertical">
+					<div class="space-y-4 p-4 lg:p-6">
+						<h1 class="text-xl font-bold text-white lg:text-2xl">Patent Cost Calculator</h1>
+						<p class="text-sm text-slate-400">Estimate patent filing costs across multiple countries</p>
 
-				<div class="space-y-4 pt-2">
-					<CountrySelector />
-					<PatentDetailsForm />
-					<FilingStrategyForm onOpenStudio={handleCreateNewStrategy} />
-				</div>
+						<div class="space-y-4 pt-2">
+							<CountrySelector />
+							<PatentDetailsForm />
+							<FilingStrategyForm onOpenStudio={handleCreateNewStrategy} />
+						</div>
 
-				<!-- Calculate Button -->
-				<div class="pt-4">
-					<Button
-						size="lg"
-						disabled={!canCalculate}
-						onclick={handleCalculate}
-						class="w-full bg-green-500 py-6 text-lg font-semibold text-slate-900 shadow-lg shadow-green-500/25 transition-all hover:bg-green-400 hover:shadow-green-500/40 disabled:cursor-not-allowed disabled:opacity-50"
-					>
-						Calculate Costs
-					</Button>
-				</div>
+						<!-- Calculate Button -->
+						<div class="pt-4">
+							<Button
+								size="lg"
+								disabled={!canCalculate}
+								onclick={handleCalculate}
+								class="w-full bg-green-500 py-6 text-lg font-semibold text-slate-900 shadow-lg shadow-green-500/25 transition-all hover:bg-green-400 hover:shadow-green-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+							>
+								Calculate Costs
+							</Button>
+						</div>
+					</div>
+				</ScrollArea>
 			</aside>
 
 			<!-- Results Panel (Right) -->
-			<section class="flex-1 p-4 lg:p-6">
+			<section class="flex-1 overflow-hidden">
 				{#if hasCalculationResult}
 					<!-- Show cost results after calculation -->
-					<div class="mb-6">
-						<CostSummaryCard />
-					</div>
+					<ScrollArea class="h-full" orientation="vertical">
+						<div class="p-4 lg:p-6">
+							<div class="mb-6">
+								<CostSummaryCard />
+							</div>
 
-					<!-- Filing Steps Breakdown -->
-					<div class="mb-6 rounded-lg border border-white/10 bg-white/5 p-4">
-						<h2 class="mb-4 text-lg font-semibold text-white">Filing Steps</h2>
-						<FilingStepsBreakdown />
-					</div>
+							<!-- Filing Steps Breakdown -->
+							<div class="mb-6 rounded-lg border border-white/10 bg-white/5 p-4">
+								<h2 class="mb-4 text-lg font-semibold text-white">Filing Steps</h2>
+								<FilingStepsBreakdown />
+							</div>
 
-					<!-- National Phase Breakdown -->
-					<div class="rounded-lg border border-white/10 bg-white/5 p-4">
-						<h2 class="mb-4 text-lg font-semibold text-white">National Phase Entries</h2>
-						<CostBreakdownTable />
-					</div>
+							<!-- National Phase Breakdown -->
+							<div class="rounded-lg border border-white/10 bg-white/5 p-4">
+								<h2 class="mb-4 text-lg font-semibold text-white">National Phase Entries</h2>
+								<CostBreakdownTable />
+							</div>
+						</div>
+					</ScrollArea>
 				{:else if hasStrategySelected}
 					<!-- Show strategy canvas preview when a strategy is selected -->
-					<div class="flex h-[calc(100vh-120px)] flex-col overflow-hidden rounded-lg border border-white/10">
+					<div class="m-4 flex h-[calc(100%-2rem)] flex-col overflow-hidden rounded-lg border border-white/10 lg:m-6 lg:h-[calc(100%-3rem)]">
 						<!-- Header -->
 						<div class="flex items-center justify-between border-b border-white/10 bg-white/5 px-4 py-3">
 							<h2 class="text-lg font-semibold text-white">Filing Strategy Overview</h2>
@@ -231,7 +241,7 @@
 					</div>
 				{:else}
 					<!-- No strategy selected - centered globe watermark -->
-					<div class="relative flex h-[calc(100vh-120px)] items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-slate-950/50">
+					<div class="relative m-4 flex h-[calc(100%-2rem)] items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-slate-950/50 lg:m-6 lg:h-[calc(100%-3rem)]">
 						<!-- Globe watermark -->
 						<svg class="h-64 w-64 opacity-10" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<circle class="globe-ring-outer" cx="32" cy="32" r="28" stroke="url(#watermark-gradient)" stroke-width="3" />
