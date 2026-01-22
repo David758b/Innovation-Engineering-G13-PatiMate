@@ -27,6 +27,12 @@
 	}
 
 	function handleOpenStudio() {
+		// Clear the filing strategy selection when creating a new custom strategy
+		calculatorStore.setFilingStrategy(null);
+		// Clear the canvas to start fresh
+		strategyStudioStore.clearCanvas();
+		// Reset tracking state so templates can be reloaded later
+		lastLoadedStrategy = null;
 		showStrategyStudio = true;
 	}
 
