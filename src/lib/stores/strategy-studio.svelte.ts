@@ -54,10 +54,16 @@ export const BLOCK_TEMPLATES: Omit<StudioBlock, 'id' | 'x' | 'y'>[] = [
 	{ type: 'filing', category: 'pct-publication', label: 'Publication', width: 180, height: 60, data: { cost: 0, deadline: '18 months' } },
 	{ type: 'filing', category: 'pct-demand', label: 'Demand (option)', width: 180, height: 60, data: { cost: 12500, deadline: '22 months', note: 'Optional' } },
 	{ type: 'filing', category: 'pct-report', label: 'PCT Final Report', width: 180, height: 60, data: { cost: 0, deadline: '28 months' } },
-	// Regional entries
-	{ type: 'filing', category: 'ep-entry', label: 'EP Entry', width: 140, height: 50, data: { cost: 35000, deadline: '31 months' } },
-	{ type: 'filing', category: 'us-entry', label: 'US Entry', width: 140, height: 50, data: { cost: 28000, deadline: '30 months' } },
-	{ type: 'filing', category: 'cn-entry', label: 'CN Entry', width: 140, height: 50, data: { cost: 21000, deadline: '30 months' } },
+	// Regional/National entries - category format: '{countryCode}-entry'
+	{ type: 'filing', category: 'ep-entry', label: 'EP Entry', width: 140, height: 50, data: { cost: 35000, deadline: '31 months', countryCode: 'EP' } },
+	{ type: 'filing', category: 'us-entry', label: 'US Entry', width: 140, height: 50, data: { cost: 28000, deadline: '30 months', countryCode: 'US' } },
+	{ type: 'filing', category: 'cn-entry', label: 'CN Entry', width: 140, height: 50, data: { cost: 21000, deadline: '30 months', countryCode: 'CN' } },
+	{ type: 'filing', category: 'jp-entry', label: 'JP Entry', width: 140, height: 50, data: { cost: 24500, deadline: '30 months', countryCode: 'JP' } },
+	{ type: 'filing', category: 'kr-entry', label: 'KR Entry', width: 140, height: 50, data: { cost: 17500, deadline: '31 months', countryCode: 'KR' } },
+	{ type: 'filing', category: 'in-entry', label: 'IN Entry', width: 140, height: 50, data: { cost: 14000, deadline: '31 months', countryCode: 'IN' } },
+	{ type: 'filing', category: 'au-entry', label: 'AU Entry', width: 140, height: 50, data: { cost: 21000, deadline: '31 months', countryCode: 'AU' } },
+	{ type: 'filing', category: 'ca-entry', label: 'CA Entry', width: 140, height: 50, data: { cost: 19250, deadline: '30 months', countryCode: 'CA' } },
+	{ type: 'filing', category: 'br-entry', label: 'BR Entry', width: 140, height: 50, data: { cost: 14000, deadline: '30 months', countryCode: 'BR' } },
 	// Cost Items
 	{ type: 'cost', category: 'translation', label: 'Translation', width: 160, height: 50, data: { cost: 17500 } },
 	{ type: 'cost', category: 'attorney', label: 'Attorney Fees', width: 160, height: 50, data: { cost: 21000 } },
@@ -76,6 +82,42 @@ export const BLOCK_TEMPLATES: Omit<StudioBlock, 'id' | 'x' | 'y'>[] = [
 	{ type: 'milestone', category: 'endpoint', label: 'Max. 20 years', width: 160, height: 46, data: { note: 'Maximum patent lifetime' } },
 	{ type: 'milestone', category: 'timeline', label: '30-31 months', width: 155, height: 46, data: { months: 30 } },
 ];
+
+// Map country codes to entry block categories
+export const COUNTRY_TO_ENTRY_CATEGORY: Record<string, string> = {
+	EP: 'ep-entry',
+	US: 'us-entry',
+	CN: 'cn-entry',
+	JP: 'jp-entry',
+	KR: 'kr-entry',
+	IN: 'in-entry',
+	AU: 'au-entry',
+	CA: 'ca-entry',
+	BR: 'br-entry'
+};
+
+// Reverse map: entry category to country code
+export const ENTRY_CATEGORY_TO_COUNTRY: Record<string, string> = Object.fromEntries(
+	Object.entries(COUNTRY_TO_ENTRY_CATEGORY).map(([code, cat]) => [cat, code])
+);
+
+// Check if a block is a national entry block
+export function isNationalEntryBlock(block: StudioBlock): boolean {
+	return block.category.endsWith('-entry') && block.category !== 'dk-entry';
+}
+
+// Get country code from a national entry block
+export function getCountryCodeFromBlock(block: StudioBlock): string | null {
+	if (!isNationalEntryBlock(block)) return null;
+	return ENTRY_CATEGORY_TO_COUNTRY[block.category] || null;
+}
+
+// Get the entry block template for a country code
+export function getEntryBlockTemplate(countryCode: string): Omit<StudioBlock, 'id' | 'x' | 'y'> | null {
+	const category = COUNTRY_TO_ENTRY_CATEGORY[countryCode];
+	if (!category) return null;
+	return BLOCK_TEMPLATES.find(t => t.category === category) || null;
+}
 
 function generateId(): string {
 	return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
@@ -547,9 +589,9 @@ function createStrategyStudioStore() {
 
 				// === PREPARATION STEPS ===
 				// Preliminary Search (optional) - connects from top of DK Application
-				const prelimSearch = this.addBlock(BLOCK_TEMPLATES[26], 320, 20);
+				const prelimSearch = this.addBlock(BLOCK_TEMPLATES[32], 320, 20);
 				// Write Application - connects from left side of DK Application
-				const writeApp = this.addBlock(BLOCK_TEMPLATES[27], 80, 165);
+				const writeApp = this.addBlock(BLOCK_TEMPLATES[33], 80, 165);
 
 				// === TOP ROW: Danish National Path (y=160) ===
 				// DK Application (Priority Date) - 0 months
@@ -557,7 +599,7 @@ function createStrategyStudioStore() {
 				// Novelty Search - 7-9 months
 				const noveltySearch = this.addBlock(BLOCK_TEMPLATES[7], 560, 160);
 				// 12 months junction milestone - aligned with Danish path
-				const milestone12 = this.addBlock(BLOCK_TEMPLATES[28], 800, 167);
+				const milestone12 = this.addBlock(BLOCK_TEMPLATES[34], 800, 167);
 				// Publication - 18 months
 				const dkPublication = this.addBlock(BLOCK_TEMPLATES[8], 960, 160);
 				// Office Action(s)
@@ -565,7 +607,7 @@ function createStrategyStudioStore() {
 				// DK Patent
 				const dkPatent = this.addBlock(BLOCK_TEMPLATES[10], 1440, 160);
 				// Max 20 years endpoint milestone - aligned with Danish path
-				const maxYears = this.addBlock(BLOCK_TEMPLATES[29], 1680, 167);
+				const maxYears = this.addBlock(BLOCK_TEMPLATES[35], 1680, 167);
 
 				// === BOTTOM ROW: PCT International Path (y=400) ===
 				// PCT Application (filed at 12 months) - centered under milestone12
@@ -579,12 +621,10 @@ function createStrategyStudioStore() {
 				// PCT Final Report - 28 months
 				const pctReport = this.addBlock(BLOCK_TEMPLATES[14], 1730, 400);
 				// 30-31 months milestone - aligned with PCT path
-				const milestone30 = this.addBlock(BLOCK_TEMPLATES[30], 1970, 407);
+				const milestone30 = this.addBlock(BLOCK_TEMPLATES[36], 1970, 407);
 
-				// === NATIONAL PHASE ENTRIES ===
-				const epEntry = this.addBlock(BLOCK_TEMPLATES[15], 2150, 330);
-				const usEntry = this.addBlock(BLOCK_TEMPLATES[16], 2150, 405);
-				const cnEntry = this.addBlock(BLOCK_TEMPLATES[17], 2150, 480);
+				// National phase entries are added dynamically when countries are selected
+				// via the country selector or by adding entry blocks in Strategy Studio
 
 				connections = [
 					// Preparation steps connect directly to DK Application
@@ -609,14 +649,114 @@ function createStrategyStudioStore() {
 					{ id: generateId(), fromBlockId: pctSearch.id, toBlockId: pctPublication.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
 					{ id: generateId(), fromBlockId: pctPublication.id, toBlockId: pctDemand.id, fromPort: 'right', toPort: 'left', label: '', style: 'dashed', lineType: 'straight' },
 					{ id: generateId(), fromBlockId: pctDemand.id, toBlockId: pctReport.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
-					{ id: generateId(), fromBlockId: pctReport.id, toBlockId: milestone30.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
-
-					// From 30-31 mdr. milestone to National Phase entries
-					{ id: generateId(), fromBlockId: milestone30.id, toBlockId: epEntry.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
-					{ id: generateId(), fromBlockId: milestone30.id, toBlockId: usEntry.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' },
-					{ id: generateId(), fromBlockId: milestone30.id, toBlockId: cnEntry.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' }
+					{ id: generateId(), fromBlockId: pctReport.id, toBlockId: milestone30.id, fromPort: 'right', toPort: 'left', label: '', style: 'solid', lineType: 'straight' }
+					// National phase entry connections are added dynamically when countries are selected
 				];
 			}
+		},
+
+		// Get all country codes from current national entry blocks
+		getCountriesFromBlocks(): string[] {
+			return blocks
+				.filter(isNationalEntryBlock)
+				.map(getCountryCodeFromBlock)
+				.filter((code): code is string => code !== null);
+		},
+
+		// Add a national entry block for a country code
+		// Returns the created block or null if country not supported
+		addNationalEntry(countryCode: string): StudioBlock | null {
+			// Check if entry already exists
+			const existingCategory = COUNTRY_TO_ENTRY_CATEGORY[countryCode];
+			if (!existingCategory) return null;
+
+			const existing = blocks.find(b => b.category === existingCategory);
+			if (existing) return existing;
+
+			const template = getEntryBlockTemplate(countryCode);
+			if (!template) return null;
+
+			// Find the 30-31 months milestone to position near it
+			const milestone30 = blocks.find(b => b.category === 'timeline' && b.label.includes('30'));
+
+			// Find existing entry blocks to position below them
+			const entryBlocks = blocks.filter(isNationalEntryBlock);
+
+			const x = milestone30 ? milestone30.x + milestone30.width + 80 : 2150;
+			let y: number;
+
+			if (entryBlocks.length > 0) {
+				// Position below existing entry blocks
+				const maxY = Math.max(...entryBlocks.map(b => b.y + b.height));
+				y = maxY + 15;
+			} else if (milestone30) {
+				// First entry: center vertically with milestone
+				y = milestone30.y + (milestone30.height - template.height) / 2;
+			} else {
+				y = 400;
+			}
+
+			const block = this.addBlock(template, x, y);
+
+			// Connect from milestone30 if it exists
+			if (milestone30) {
+				connections = [...connections, {
+					id: generateId(),
+					fromBlockId: milestone30.id,
+					toBlockId: block.id,
+					fromPort: 'right',
+					toPort: 'left',
+					label: '',
+					style: 'solid',
+					lineType: 'straight'
+				}];
+			}
+
+			return block;
+		},
+
+		// Remove a national entry block for a country code
+		removeNationalEntry(countryCode: string): boolean {
+			const category = COUNTRY_TO_ENTRY_CATEGORY[countryCode];
+			if (!category) return false;
+
+			const block = blocks.find(b => b.category === category);
+			if (!block) return false;
+
+			this.deleteBlock(block.id);
+			return true;
+		},
+
+		// Sync countries: add/remove entry blocks to match the provided country list
+		syncCountries(countryCodes: string[]) {
+			const currentCountries = this.getCountriesFromBlocks();
+
+			// Add new countries
+			for (const code of countryCodes) {
+				if (!currentCountries.includes(code)) {
+					this.addNationalEntry(code);
+				}
+			}
+
+			// Remove countries no longer in list
+			for (const code of currentCountries) {
+				if (!countryCodes.includes(code)) {
+					this.removeNationalEntry(code);
+				}
+			}
+		},
+
+		// Get all non-entry filing step blocks (for cost calculation)
+		getFilingStepBlocks(): StudioBlock[] {
+			return blocks.filter(b =>
+				(b.type === 'filing' || b.type === 'cost') &&
+				!isNationalEntryBlock(b)
+			);
+		},
+
+		// Get all national entry blocks (for cost calculation)
+		getNationalEntryBlocks(): StudioBlock[] {
+			return blocks.filter(isNationalEntryBlock);
 		},
 
 		// Clear canvas

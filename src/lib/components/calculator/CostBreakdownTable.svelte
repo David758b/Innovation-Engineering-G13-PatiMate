@@ -8,25 +8,16 @@
 		return currencyStore.format(amount);
 	}
 
-	const selectedCount = $derived(calculatorStore.input.countries.length);
 	const result = $derived(calculatorStore.calculationResult);
 </script>
 
-{#if selectedCount === 0}
-	<div class="flex flex-col items-center justify-center py-16 text-center">
-		<div class="mb-4 text-6xl opacity-20">🌍</div>
-		<p class="text-lg text-slate-400">Select countries to see cost breakdown</p>
-		<p class="mt-2 text-sm text-slate-500">
-			Use the preset bundles or search for specific countries
-		</p>
+{#if !result}
+	<div class="flex flex-col items-center justify-center py-8 text-center">
+		<p class="text-sm text-slate-500">No calculation results yet</p>
 	</div>
-{:else if !result}
-	<div class="flex flex-col items-center justify-center py-16 text-center">
-		<div class="mb-4 text-6xl opacity-20">📊</div>
-		<p class="text-lg text-slate-400">Click "Calculate Costs" to see breakdown</p>
-		<p class="mt-2 text-sm text-slate-500">
-			{selectedCount} {selectedCount === 1 ? 'country' : 'countries'} selected
-		</p>
+{:else if result.countryResults.length === 0}
+	<div class="flex flex-col items-center justify-center py-8 text-center">
+		<p class="text-sm text-slate-500">No national phase entries in current strategy</p>
 	</div>
 {:else}
 	<div class="overflow-x-auto">
@@ -77,6 +68,33 @@
 						</Table.Cell>
 					</Table.Row>
 				{/each}
+				<!-- Subtotal row -->
+				<Table.Row class="border-white/10 border-t-2 bg-white/5">
+					<Table.Cell>
+						<span class="font-semibold text-slate-200">National Phase Subtotal</span>
+					</Table.Cell>
+					<Table.Cell class="text-right font-semibold text-slate-300">
+						{formatCurrency(result.totalOfficialFees)}
+					</Table.Cell>
+					<Table.Cell class="hidden text-right font-semibold text-slate-300 md:table-cell">
+						{formatCurrency(result.totalForeignAttorneyFees)}
+					</Table.Cell>
+					<Table.Cell class="text-right font-semibold text-slate-300">
+						{formatCurrency(result.totalAttorneyFees)}
+					</Table.Cell>
+					<Table.Cell class="hidden text-right font-semibold text-slate-300 md:table-cell">
+						{formatCurrency(result.totalFlatFees)}
+					</Table.Cell>
+					<Table.Cell class="hidden text-right font-semibold text-slate-300 lg:table-cell">
+						{result.totalTranslationCosts > 0 ? formatCurrency(result.totalTranslationCosts) : '-'}
+					</Table.Cell>
+					<Table.Cell class="hidden text-right font-semibold text-slate-300 lg:table-cell">
+						{formatCurrency(result.totalMaintenanceFees)}
+					</Table.Cell>
+					<Table.Cell class="text-right font-bold text-green-400">
+						{formatCurrency(result.nationalPhaseTotal)}
+					</Table.Cell>
+				</Table.Row>
 			</Table.Body>
 		</Table.Root>
 	</div>

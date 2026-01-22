@@ -4,12 +4,14 @@
 	import { Button } from '$lib/components/ui/button';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
 	import { currencyStore, SUPPORTED_CURRENCIES } from '$lib/stores/currency.svelte';
+	import { strategyStudioStore } from '$lib/stores/strategy-studio.svelte';
 	import { exportToPDF } from '$lib/utils/pdf-export';
 	import { Download, RefreshCw } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 
-	const selectedCount = $derived(calculatorStore.input.countries.length);
 	const result = $derived(calculatorStore.calculationResult);
+	const hasStrategy = $derived(calculatorStore.input.filingStrategy !== null);
+	const strategyCountries = $derived(strategyStudioStore.getCountriesFromBlocks());
 
 	// Fetch exchange rates on mount
 	onMount(() => {
@@ -74,15 +76,22 @@
 		</div>
 
 		<!-- Empty State -->
-		{#if selectedCount === 0}
+		{#if !hasStrategy}
 			<div class="py-8 text-center">
-				<p class="text-lg text-slate-400">Select countries to see cost estimates</p>
+				<p class="text-lg text-slate-400">Select a filing strategy to see cost estimates</p>
+			</div>
+		{:else if strategyCountries.length === 0}
+			<div class="py-8 text-center">
+				<p class="text-lg text-slate-400">Add target countries to your strategy</p>
+				<p class="mt-2 text-sm text-slate-500">
+					Use the country selector or add entry blocks in Strategy Studio
+				</p>
 			</div>
 		{:else if !result}
-			<!-- Countries selected but not calculated yet -->
+			<!-- Strategy selected but not calculated yet -->
 			<div class="py-8 text-center">
 				<p class="text-lg text-slate-400">
-					{selectedCount} {selectedCount === 1 ? 'country' : 'countries'} selected
+					{strategyCountries.length} {strategyCountries.length === 1 ? 'country' : 'countries'} in strategy
 				</p>
 				<p class="mt-2 text-sm text-slate-500">
 					Click "Calculate Costs" to see the breakdown
@@ -98,9 +107,9 @@
 					{formatCurrency(result.totalCost)}
 				</p>
 				<p class="mt-1 text-sm text-slate-500">
-					{result.countryCount}
-					{result.countryCount === 1 ? 'country' : 'countries'} &middot;
-					{result.maintenancePeriod} year maintenance
+					{result.filingStepResults.length} filing steps &middot;
+					{result.countryCount} {result.countryCount === 1 ? 'country' : 'countries'} &middot;
+					{result.maintenancePeriod}y maintenance
 				</p>
 				<Button
 					variant="outline"
@@ -113,44 +122,24 @@
 				</Button>
 			</div>
 
-			<!-- Cost Breakdown -->
-			<div class="grid grid-cols-2 gap-3 border-t border-white/10 pt-4 sm:grid-cols-3 lg:grid-cols-6">
-				<div class="text-center">
-					<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">Official</p>
-					<p class="mt-1 text-lg font-semibold text-slate-300">
-						{formatCurrency(result.totalOfficialFees)}
+			<!-- Cost Breakdown: Filing Steps + National Phase -->
+			<div class="grid grid-cols-2 gap-4 border-t border-white/10 pt-4">
+				<div class="rounded-lg border border-white/10 bg-white/5 p-4 text-center">
+					<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">Filing Steps</p>
+					<p class="mt-2 text-2xl font-bold text-slate-200">
+						{formatCurrency(result.filingStepsTotal)}
+					</p>
+					<p class="mt-1 text-xs text-slate-500">
+						{result.filingStepResults.length} steps
 					</p>
 				</div>
-				<div class="text-center">
-					<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">Foreign Atty</p>
-					<p class="mt-1 text-lg font-semibold text-slate-300">
-						{formatCurrency(result.totalForeignAttorneyFees)}
+				<div class="rounded-lg border border-white/10 bg-white/5 p-4 text-center">
+					<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">National Phase</p>
+					<p class="mt-2 text-2xl font-bold text-slate-200">
+						{formatCurrency(result.nationalPhaseTotal)}
 					</p>
-				</div>
-				<div class="text-center">
-					<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">Attorney</p>
-					<p class="mt-1 text-lg font-semibold text-slate-300">
-						{formatCurrency(result.totalAttorneyFees)}
-					</p>
-				</div>
-				<div class="text-center">
-					<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">Flat Fee</p>
-					<p class="mt-1 text-lg font-semibold text-slate-300">
-						{formatCurrency(result.totalFlatFees)}
-					</p>
-				</div>
-				<div class="text-center">
-					<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">Translation</p>
-					<p class="mt-1 text-lg font-semibold text-slate-300">
-						{result.totalTranslationCosts > 0 ? formatCurrency(result.totalTranslationCosts) : '-'}
-					</p>
-				</div>
-				<div class="text-center">
-					<p class="text-xs font-medium tracking-wider text-slate-500 uppercase">
-						Maint.({result.maintenancePeriod}y)
-					</p>
-					<p class="mt-1 text-lg font-semibold text-slate-300">
-						{formatCurrency(result.totalMaintenanceFees)}
+					<p class="mt-1 text-xs text-slate-500">
+						{result.countryCount} {result.countryCount === 1 ? 'country' : 'countries'}
 					</p>
 				</div>
 			</div>

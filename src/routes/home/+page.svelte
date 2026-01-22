@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import CostBreakdownTable from '$lib/components/calculator/CostBreakdownTable.svelte';
 	import CostSummaryCard from '$lib/components/calculator/CostSummaryCard.svelte';
 	import CountrySelector from '$lib/components/calculator/CountrySelector.svelte';
+	import FilingStepsBreakdown from '$lib/components/calculator/FilingStepsBreakdown.svelte';
 	import FilingStrategyForm from '$lib/components/calculator/FilingStrategyForm.svelte';
 	import Logo from '$lib/components/Logo.svelte';
 	import PatentDetailsForm from '$lib/components/calculator/PatentDetailsForm.svelte';
@@ -13,10 +13,14 @@
 	import StudioMiniMap from '$lib/components/studio/StudioMiniMap.svelte';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
 	import { strategyStudioStore } from '$lib/stores/strategy-studio.svelte';
-	import { Gamepad2 } from '@lucide/svelte';
 
 	let showStrategyStudio = $state(false);
 	let lastLoadedStrategy = $state<string | null>(null);
+
+	// Track last synced state to avoid infinite loops
+	let lastSyncedFromStrategy = $state<string[]>([]);
+	let lastSyncedFromCalculator = $state<string[]>([]);
+	let isSyncing = $state(false);
 
 	function handleCalculate() {
 		calculatorStore.calculate();
@@ -30,11 +34,17 @@
 		showStrategyStudio = false;
 	}
 
-	const hasCountries = $derived(calculatorStore.input.countries.length > 0);
 	const hasCalculationResult = $derived(calculatorStore.calculationResult !== null);
 	const filingStrategy = $derived(calculatorStore.input.filingStrategy);
 	const hasStrategySelected = $derived(filingStrategy !== null);
 	const hasBlocks = $derived(strategyStudioStore.blocks.length > 0);
+
+	// Derive countries from strategy blocks
+	const strategyCountries = $derived(strategyStudioStore.getCountriesFromBlocks());
+	const calculatorCountries = $derived(calculatorStore.input.countries);
+
+	// Enable calculate button when strategy is selected (countries come from strategy)
+	const canCalculate = $derived(hasStrategySelected && strategyCountries.length > 0);
 
 	// Load the appropriate strategy into the canvas when filing strategy changes
 	$effect(() => {
@@ -47,6 +57,54 @@
 				strategyStudioStore.loadStrategy(customId);
 			}
 			lastLoadedStrategy = strategy;
+
+			// After loading, sync countries from strategy to calculator
+			const countries = strategyStudioStore.getCountriesFromBlocks();
+			calculatorStore.setCountries(countries);
+			lastSyncedFromStrategy = [...countries];
+			lastSyncedFromCalculator = [...countries];
+		}
+	});
+
+	// Sync: Strategy blocks → Calculator countries
+	$effect(() => {
+		if (isSyncing || !hasStrategySelected) return;
+
+		const currentStrategyCountries = strategyCountries;
+		const prevStrategyCountries = lastSyncedFromStrategy;
+
+		// Check if strategy countries changed
+		const strategyChanged =
+			currentStrategyCountries.length !== prevStrategyCountries.length ||
+			!currentStrategyCountries.every((c) => prevStrategyCountries.includes(c));
+
+		if (strategyChanged) {
+			isSyncing = true;
+			calculatorStore.setCountries([...currentStrategyCountries]);
+			lastSyncedFromStrategy = [...currentStrategyCountries];
+			lastSyncedFromCalculator = [...currentStrategyCountries];
+			isSyncing = false;
+		}
+	});
+
+	// Sync: Calculator countries → Strategy blocks
+	$effect(() => {
+		if (isSyncing || !hasStrategySelected) return;
+
+		const currentCalcCountries = calculatorCountries;
+		const prevCalcCountries = lastSyncedFromCalculator;
+
+		// Check if calculator countries changed
+		const calcChanged =
+			currentCalcCountries.length !== prevCalcCountries.length ||
+			!currentCalcCountries.every((c) => prevCalcCountries.includes(c));
+
+		if (calcChanged) {
+			isSyncing = true;
+			strategyStudioStore.syncCountries([...currentCalcCountries]);
+			lastSyncedFromCalculator = [...currentCalcCountries];
+			lastSyncedFromStrategy = [...currentCalcCountries];
+			isSyncing = false;
 		}
 	});
 </script>
@@ -84,7 +142,7 @@
 				<div class="pt-4">
 					<Button
 						size="lg"
-						disabled={!hasCountries}
+						disabled={!canCalculate}
 						onclick={handleCalculate}
 						class="w-full bg-green-500 py-6 text-lg font-semibold text-slate-900 shadow-lg shadow-green-500/25 transition-all hover:bg-green-400 hover:shadow-green-500/40 disabled:cursor-not-allowed disabled:opacity-50"
 					>
@@ -101,8 +159,15 @@
 						<CostSummaryCard />
 					</div>
 
+					<!-- Filing Steps Breakdown -->
+					<div class="mb-6 rounded-lg border border-white/10 bg-white/5 p-4">
+						<h2 class="mb-4 text-lg font-semibold text-white">Filing Steps</h2>
+						<FilingStepsBreakdown />
+					</div>
+
+					<!-- National Phase Breakdown -->
 					<div class="rounded-lg border border-white/10 bg-white/5 p-4">
-						<h2 class="mb-4 text-lg font-semibold text-white">Cost Breakdown by Country</h2>
+						<h2 class="mb-4 text-lg font-semibold text-white">National Phase Entries</h2>
 						<CostBreakdownTable />
 					</div>
 				{:else if hasStrategySelected}

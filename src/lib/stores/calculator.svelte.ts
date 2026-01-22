@@ -1,8 +1,17 @@
 import { COUNTRIES } from '$lib/data/countries';
 import { DEFAULT_COUNTRY_COSTS, DEFAULT_GLOBAL_SETTINGS } from '$lib/data/default-costs';
 import type { CalculationInput, MaintenancePeriod, UserConfig } from '$lib/data/types';
+import { strategyStudioStore, getCountryCodeFromBlock, isNationalEntryBlock } from '$lib/stores/strategy-studio.svelte';
 
-// Calculation result for a single country
+// Filing step result (from strategy blocks)
+export interface FilingStepResult {
+	id: string;
+	label: string;
+	category: string;
+	cost: number;
+}
+
+// Calculation result for a single country (national phase entry)
 export interface CountryResult {
 	code: string;
 	name: string;
@@ -19,6 +28,11 @@ export interface CountryResult {
 // Summary of all calculations
 export interface CalculationSummary {
 	totalCost: number;
+	// Filing steps (from strategy blocks)
+	filingStepsTotal: number;
+	filingStepResults: FilingStepResult[];
+	// National phase (from country settings)
+	nationalPhaseTotal: number;
 	totalOfficialFees: number;
 	totalForeignAttorneyFees: number;
 	totalAttorneyFees: number;
@@ -105,18 +119,28 @@ function createCalculatorStore() {
 			return calculationResult;
 		},
 
-		// Calculate costs based on current input and config
+		// Calculate costs based on strategy blocks and config
 		calculate() {
-			const selectedCountries = input.countries
-				.map((code) => COUNTRIES.find((c) => c.code === code))
-				.filter((c) => c !== undefined);
+			const globalSettings = userConfig.globalSettings;
 
-			if (selectedCountries.length === 0) {
-				calculationResult = null;
-				return;
+			// === FILING STEPS (from strategy blocks) ===
+			const filingStepBlocks = strategyStudioStore.getFilingStepBlocks();
+			const filingStepResults: FilingStepResult[] = [];
+			let filingStepsTotal = 0;
+
+			for (const block of filingStepBlocks) {
+				const cost = typeof block.data.cost === 'number' ? block.data.cost : 0;
+				filingStepResults.push({
+					id: block.id,
+					label: block.label,
+					category: block.category,
+					cost
+				});
+				filingStepsTotal += cost;
 			}
 
-			const globalSettings = userConfig.globalSettings;
+			// === NATIONAL PHASE ENTRIES (from country settings) ===
+			const entryBlocks = strategyStudioStore.getNationalEntryBlocks();
 			const countryResults: CountryResult[] = [];
 
 			let totalOfficialFees = 0;
@@ -126,13 +150,21 @@ function createCalculatorStore() {
 			let totalTranslationCosts = 0;
 			let totalMaintenanceFees = 0;
 
-			for (const country of selectedCountries) {
-				const defaults = DEFAULT_COUNTRY_COSTS[country.code];
+			for (const block of entryBlocks) {
+				const countryCode = getCountryCodeFromBlock(block);
+				if (!countryCode) continue;
+
+				const country = COUNTRIES.find((c) => c.code === countryCode);
+				if (!country) continue;
+
+				const defaults = DEFAULT_COUNTRY_COSTS[countryCode];
+				if (!defaults) continue;
+
 				const overrides = {
-					official: userConfig.officialFeeOverrides[country.code] || {},
-					foreignAttorney: userConfig.foreignAttorneyOverrides[country.code],
-					translation: userConfig.translationRateOverrides[country.code],
-					maintenance: userConfig.maintenanceOverrides[country.code]
+					official: userConfig.officialFeeOverrides[countryCode] || {},
+					foreignAttorney: userConfig.foreignAttorneyOverrides[countryCode],
+					translation: userConfig.translationRateOverrides[countryCode],
+					maintenance: userConfig.maintenanceOverrides[countryCode]
 				};
 
 				// Official fees (sum of filing, search, examination, grant)
@@ -158,7 +190,6 @@ function createCalculatorStore() {
 				const flatFee = globalSettings.flatFee;
 
 				// Translation costs (based on word count for more accuracy)
-				// Convert per-page rate to per-word rate (~250 words per page assumed)
 				const translationRatePerPage = overrides.translation ?? defaults.translationCostPerPage;
 				const translationRatePerWord = translationRatePerPage / 250;
 				const translationCosts = defaults.requiresTranslation
@@ -179,7 +210,7 @@ function createCalculatorStore() {
 					maintenanceFees;
 
 				countryResults.push({
-					code: country.code,
+					code: countryCode,
 					name: country.name,
 					flag: country.flag,
 					officialFees: officialTotal,
@@ -200,14 +231,19 @@ function createCalculatorStore() {
 				totalMaintenanceFees += maintenanceFees;
 			}
 
+			const nationalPhaseTotal =
+				totalOfficialFees +
+				totalForeignAttorneyFees +
+				totalAttorneyFees +
+				totalFlatFees +
+				totalTranslationCosts +
+				totalMaintenanceFees;
+
 			calculationResult = {
-				totalCost:
-					totalOfficialFees +
-					totalForeignAttorneyFees +
-					totalAttorneyFees +
-					totalFlatFees +
-					totalTranslationCosts +
-					totalMaintenanceFees,
+				totalCost: filingStepsTotal + nationalPhaseTotal,
+				filingStepsTotal,
+				filingStepResults,
+				nationalPhaseTotal,
 				totalOfficialFees,
 				totalForeignAttorneyFees,
 				totalAttorneyFees,

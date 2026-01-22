@@ -38,6 +38,7 @@ const TECH_FIELD_LABELS: Record<string, string> = {
 
 // Filing strategy labels
 const FILING_STRATEGY_LABELS: Record<string, string> = {
+	'dk-pct': 'DK → PCT Filing',
 	direct: 'Direct Filing',
 	pct: 'PCT Filing'
 };
@@ -130,9 +131,14 @@ export function exportToPDF(result: CalculationSummary, input: CalculationInput)
 	doc.setFont('helvetica', 'normal');
 	doc.setTextColor(71, 85, 105); // Slate 600
 
-	const filingStrategyLabel = input.filingStrategy
-		? (FILING_STRATEGY_LABELS[input.filingStrategy] || input.filingStrategy)
-		: 'Not Selected';
+	// Format filing strategy label
+	const getFilingStrategyLabel = (strategy: string | null): string => {
+		if (!strategy) return 'Not Selected';
+		if (FILING_STRATEGY_LABELS[strategy]) return FILING_STRATEGY_LABELS[strategy];
+		if (strategy.startsWith('custom-')) return 'Custom Strategy';
+		return strategy;
+	};
+	const filingStrategyLabel = getFilingStrategyLabel(input.filingStrategy);
 
 	const params = [
 		['Countries:', `${result.countryCount} selected`],
@@ -182,11 +188,11 @@ export function exportToPDF(result: CalculationSummary, input: CalculationInput)
 
 	yPos += 12;
 
-	// ===== COST SUMMARY TABLE =====
+	// ===== COST OVERVIEW TABLE =====
 	doc.setFont('helvetica', 'bold');
 	doc.setFontSize(11);
 	doc.setTextColor(30, 41, 59);
-	doc.text('Cost Summary', contentMargin, yPos);
+	doc.text('Cost Overview', contentMargin, yPos);
 
 	yPos += 4;
 
@@ -194,15 +200,8 @@ export function exportToPDF(result: CalculationSummary, input: CalculationInput)
 		startY: yPos,
 		head: [['Category', 'Amount']],
 		body: [
-			['Official Fees', formatCurrency(result.totalOfficialFees)],
-			['Foreign Attorney Fees', formatCurrency(result.totalForeignAttorneyFees)],
-			['Attorney Fees', formatCurrency(result.totalAttorneyFees)],
-			['Flat Fees', formatCurrency(result.totalFlatFees)],
-			[
-				'Translation Costs',
-				result.totalTranslationCosts > 0 ? formatCurrency(result.totalTranslationCosts) : '-'
-			],
-			[`Maintenance (${result.maintenancePeriod}y)`, formatCurrency(result.totalMaintenanceFees)]
+			['Filing Steps', formatCurrency(result.filingStepsTotal)],
+			['National Phase Entries', formatCurrency(result.nationalPhaseTotal)]
 		],
 		theme: 'striped',
 		headStyles: {
@@ -218,7 +217,7 @@ export function exportToPDF(result: CalculationSummary, input: CalculationInput)
 		},
 		columnStyles: {
 			0: { halign: 'left' },
-			1: { halign: 'right' }
+			1: { halign: 'right', fontStyle: 'bold' }
 		},
 		tableWidth: contentWidth,
 		margin: { left: contentMargin, right: contentMargin }
@@ -226,52 +225,127 @@ export function exportToPDF(result: CalculationSummary, input: CalculationInput)
 
 	yPos = doc.lastAutoTable.finalY + 12;
 
-	// ===== COUNTRY BREAKDOWN TABLE =====
-	doc.setFont('helvetica', 'bold');
-	doc.setFontSize(11);
-	doc.setTextColor(30, 41, 59);
-	doc.text('Cost Breakdown by Country', contentMargin, yPos);
+	// ===== FILING STEPS BREAKDOWN TABLE =====
+	if (result.filingStepResults.length > 0) {
+		doc.setFont('helvetica', 'bold');
+		doc.setFontSize(11);
+		doc.setTextColor(30, 41, 59);
+		doc.text('Filing Steps Breakdown', contentMargin, yPos);
 
-	yPos += 4;
+		yPos += 4;
 
-	// Full width table for country breakdown, centered
-	const countryTableWidth = contentWidth;
+		autoTable(doc, {
+			startY: yPos,
+			head: [['Filing Step', 'Cost']],
+			body: [
+				...result.filingStepResults.map((step) => [
+					step.label,
+					step.cost > 0 ? formatCurrency(step.cost) : '-'
+				]),
+				// Subtotal row
+				['Filing Steps Subtotal', formatCurrency(result.filingStepsTotal)]
+			],
+			theme: 'striped',
+			headStyles: {
+				fillColor: [30, 41, 59],
+				textColor: [255, 255, 255],
+				fontStyle: 'bold',
+				fontSize: 9,
+				halign: 'center'
+			},
+			styles: {
+				fontSize: 9,
+				cellPadding: 3
+			},
+			columnStyles: {
+				0: { halign: 'left' },
+				1: { halign: 'right' }
+			},
+			// Style the last row (subtotal) differently
+			didParseCell: function (data) {
+				if (data.row.index === result.filingStepResults.length && data.section === 'body') {
+					data.cell.styles.fontStyle = 'bold';
+					data.cell.styles.fillColor = [240, 253, 244]; // Light green
+					if (data.column.index === 1) {
+						data.cell.styles.textColor = [22, 163, 74]; // Green text for amount
+					}
+				}
+			},
+			tableWidth: contentWidth,
+			margin: { left: contentMargin, right: contentMargin }
+		});
 
-	autoTable(doc, {
-		startY: yPos,
-		head: [
-			['Country', 'Official', 'Foreign Atty', 'Attorney', 'Flat Fee', 'Translation', 'Maint.', 'Total']
-		],
-		body: result.countryResults.map((country) => [
-			country.name, // No emoji flag - just clean country name
-			formatCurrency(country.officialFees),
-			formatCurrency(country.foreignAttorneyFee),
-			formatCurrency(country.attorneyFee),
-			formatCurrency(country.flatFee),
-			country.translationCosts > 0 ? formatCurrency(country.translationCosts) : '-',
-			formatCurrency(country.maintenanceFees),
-			formatCurrency(country.total)
-		]),
-		theme: 'striped',
-		headStyles: {
-			fillColor: [30, 41, 59],
-			textColor: [255, 255, 255],
-			fontStyle: 'bold',
-			fontSize: 8,
-			halign: 'center'
-		},
-		styles: {
-			fontSize: 8,
-			cellPadding: 2.5,
-			halign: 'right'
-		},
-		columnStyles: {
-			0: { halign: 'left', cellWidth: 45 }, // Country name left-aligned
-			7: { fontStyle: 'bold', textColor: [22, 163, 74] } // Total in green bold
-		},
-		tableWidth: countryTableWidth,
-		margin: { left: contentMargin, right: contentMargin }
-	});
+		yPos = doc.lastAutoTable.finalY + 12;
+	}
+
+	// ===== NATIONAL PHASE BREAKDOWN TABLE =====
+	if (result.countryResults.length > 0) {
+		doc.setFont('helvetica', 'bold');
+		doc.setFontSize(11);
+		doc.setTextColor(30, 41, 59);
+		doc.text('National Phase Entries', contentMargin, yPos);
+
+		yPos += 4;
+
+		// Full width table for country breakdown, centered
+		const countryTableWidth = contentWidth;
+
+		autoTable(doc, {
+			startY: yPos,
+			head: [
+				['Country', 'Official', 'Foreign Atty', 'Attorney', 'Flat Fee', 'Translation', 'Maint.', 'Total']
+			],
+			body: [
+				...result.countryResults.map((country) => [
+					country.name, // No emoji flag - just clean country name
+					formatCurrency(country.officialFees),
+					formatCurrency(country.foreignAttorneyFee),
+					formatCurrency(country.attorneyFee),
+					formatCurrency(country.flatFee),
+					country.translationCosts > 0 ? formatCurrency(country.translationCosts) : '-',
+					formatCurrency(country.maintenanceFees),
+					formatCurrency(country.total)
+				]),
+				// Subtotal row
+				[
+					'National Phase Subtotal',
+					formatCurrency(result.totalOfficialFees),
+					formatCurrency(result.totalForeignAttorneyFees),
+					formatCurrency(result.totalAttorneyFees),
+					formatCurrency(result.totalFlatFees),
+					result.totalTranslationCosts > 0 ? formatCurrency(result.totalTranslationCosts) : '-',
+					formatCurrency(result.totalMaintenanceFees),
+					formatCurrency(result.nationalPhaseTotal)
+				]
+			],
+			theme: 'striped',
+			headStyles: {
+				fillColor: [30, 41, 59],
+				textColor: [255, 255, 255],
+				fontStyle: 'bold',
+				fontSize: 8,
+				halign: 'center'
+			},
+			styles: {
+				fontSize: 8,
+				cellPadding: 2.5,
+				halign: 'right'
+			},
+			columnStyles: {
+				0: { halign: 'left', cellWidth: 45 }, // Country name left-aligned
+				7: { fontStyle: 'bold', textColor: [22, 163, 74] } // Total in green bold
+			},
+			// Style the last row (subtotal) differently
+			didParseCell: function (data) {
+				if (data.row.index === result.countryResults.length && data.section === 'body') {
+					data.cell.styles.fontStyle = 'bold';
+					data.cell.styles.fillColor = [240, 253, 244]; // Light green
+				}
+			},
+			tableWidth: countryTableWidth,
+			margin: { left: contentMargin, right: contentMargin }
+		});
+	}
 
 	// ===== FOOTER =====
 	const finalY = doc.lastAutoTable.finalY + 12;
