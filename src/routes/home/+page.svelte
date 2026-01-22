@@ -27,6 +27,11 @@
 	}
 
 	function handleOpenStudio() {
+		// Just open the studio - preserve existing canvas state
+		showStrategyStudio = true;
+	}
+
+	function handleCreateNewStrategy() {
 		// Clear the filing strategy selection when creating a new custom strategy
 		calculatorStore.setFilingStrategy(null);
 		// Clear the canvas to start fresh
@@ -56,6 +61,9 @@
 	$effect(() => {
 		const strategy = filingStrategy;
 		if (strategy !== null && strategy !== lastLoadedStrategy) {
+			// Remember user's current country selection before loading template
+			const userCountries = [...calculatorStore.input.countries];
+
 			if (strategy === 'dk-pct') {
 				strategyStudioStore.loadTemplate('dk-pct');
 			} else if (strategy.startsWith('custom-')) {
@@ -64,11 +72,19 @@
 			}
 			lastLoadedStrategy = strategy;
 
-			// After loading, sync countries from strategy to calculator
-			const countries = strategyStudioStore.getCountriesFromBlocks();
-			calculatorStore.setCountries(countries);
-			lastSyncedFromStrategy = [...countries];
-			lastSyncedFromCalculator = [...countries];
+			// After loading template, sync user's countries TO the strategy
+			// This adds country entry blocks for any countries the user already selected
+			if (userCountries.length > 0) {
+				strategyStudioStore.syncCountries(userCountries);
+				lastSyncedFromStrategy = [...userCountries];
+				lastSyncedFromCalculator = [...userCountries];
+			} else {
+				// No user countries - sync from strategy to calculator (for templates with preset countries)
+				const strategyCountriesFromBlocks = strategyStudioStore.getCountriesFromBlocks();
+				calculatorStore.setCountries(strategyCountriesFromBlocks);
+				lastSyncedFromStrategy = [...strategyCountriesFromBlocks];
+				lastSyncedFromCalculator = [...strategyCountriesFromBlocks];
+			}
 		}
 	});
 
@@ -141,7 +157,7 @@
 				<div class="space-y-4 pt-2">
 					<CountrySelector />
 					<PatentDetailsForm />
-					<FilingStrategyForm onOpenStudio={handleOpenStudio} />
+					<FilingStrategyForm onOpenStudio={handleCreateNewStrategy} />
 				</div>
 
 				<!-- Calculate Button -->
