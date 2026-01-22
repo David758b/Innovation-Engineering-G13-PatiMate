@@ -32,16 +32,30 @@
 	}
 
 	function handleCreateNewStrategy() {
+		// Prevent sync effects from running during this transition
+		isSyncing = true;
 		// Clear the filing strategy selection when creating a new custom strategy
 		calculatorStore.setFilingStrategy(null);
 		// Clear the canvas to start fresh
 		strategyStudioStore.clearCanvas();
+		// Set zoom to 100% for new strategies
+		strategyStudioStore.setCanvasZoom(1);
 		// Reset tracking state so templates can be reloaded later
 		lastLoadedStrategy = null;
+		// Reset sync tracking to avoid false diffs when returning
+		lastSyncedFromStrategy = [];
+		lastSyncedFromCalculator = [...calculatorStore.input.countries];
 		showStrategyStudio = true;
+		// Re-enable sync after state is settled
+		isSyncing = false;
 	}
 
 	function handleCloseStudio() {
+		// Update sync tracking to current state to prevent false diffs on return
+		const currentStrategyCountries = strategyStudioStore.getCountriesFromBlocks();
+		const currentCalcCountries = calculatorStore.input.countries;
+		lastSyncedFromStrategy = [...currentStrategyCountries];
+		lastSyncedFromCalculator = [...currentCalcCountries];
 		showStrategyStudio = false;
 	}
 

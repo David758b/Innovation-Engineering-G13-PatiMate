@@ -5,7 +5,7 @@
 	import * as RadioGroup from '$lib/components/ui/radio-group';
 	import { calculatorStore } from '$lib/stores/calculator.svelte';
 	import { strategyStudioStore } from '$lib/stores/strategy-studio.svelte';
-	import { ChevronDown, ChevronUp, Sparkles, Plus } from '@lucide/svelte';
+	import { ChevronDown, ChevronUp, Sparkles, Plus, Trash2 } from '@lucide/svelte';
 
 	interface Props {
 		onOpenStudio?: () => void;
@@ -44,6 +44,15 @@
 			calculatorStore.setFilingStrategy(null);
 		}
 		selectionBeforeClick = null;
+	}
+
+	function handleDeleteStrategy(e: Event, strategyId: string) {
+		e.stopPropagation();
+		// If this strategy is currently selected, deselect it first
+		if (calculatorStore.input.filingStrategy === `custom-${strategyId}`) {
+			calculatorStore.setFilingStrategy(null);
+		}
+		strategyStudioStore.deleteStrategy(strategyId);
 	}
 </script>
 
@@ -125,6 +134,14 @@
 											{customStrategy.blocks.length} blocks, {customStrategy.connections.length} connections
 										</p>
 									</div>
+									<button
+										type="button"
+										onclick={(e) => handleDeleteStrategy(e, customStrategy.id)}
+										class="rounded p-1 text-slate-500 hover:bg-red-500/20 hover:text-red-400"
+										title="Delete strategy"
+									>
+										<Trash2 class="h-4 w-4" />
+									</button>
 								</div>
 							{/each}
 						</div>
